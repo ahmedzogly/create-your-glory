@@ -1,5 +1,14 @@
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import profileImg from "@/assets/profile.jpg";
+import projectDb from "@/assets/project-db.png";
+import projectAnalysis from "@/assets/project-analysis.jpg";
+import projectSeo from "@/assets/project-seo.png";
+import projectHr1 from "@/assets/project-hr1.png";
+import projectHr2 from "@/assets/project-hr2.png";
+import projectPizza1 from "@/assets/project-pizza1.png";
+import projectHr3 from "@/assets/project-hr3.png";
+import projectPizza2 from "@/assets/project-pizza2.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -17,10 +26,29 @@ const skills = [
   { category: "Soft Skills", items: ["Analytical Thinking", "Attention to Detail", "Problem-Solving", "Teamwork", "Time Management"] },
 ];
 
+const projects = [
+  { title: "Database Design — PageTurners Bookstore", description: "Designed a relational database with Sales, Customers, Books, and Sale_Details tables using SQL Server.", image: projectDb },
+  { title: "HR Performance Analysis Dashboard", description: "Interactive Power BI dashboard analyzing 300 employees across departments, genders, and salary distributions.", image: projectHr2 },
+  { title: "HR Analytics — Employee Money Transfer", description: "Detailed breakdown of employee money transfer methods with bar chart visualization.", image: projectHr1 },
+  { title: "HR Analytics — Full Overview", description: "Comprehensive performance analysis with geographic mapping and hiring trends.", image: projectHr3 },
+  { title: "Pizza Sales Dashboard — Excel", description: "Excel dashboard analyzing $817K+ in pizza sales across sizes, categories, and monthly trends.", image: projectPizza1 },
+  { title: "Pizza Sales Dashboard — Power BI", description: "Power BI version with interactive slicers for pizza size, category, and quantity analysis.", image: projectPizza2 },
+  { title: "Data Analytics Overview", description: "Traffic analysis dashboard with visitor insights, page views, and content performance metrics.", image: projectAnalysis },
+  { title: "SEO Performance Dashboard", description: "SEO metrics tracking organic traffic growth, keyword rankings, backlinks, and domain authority.", image: projectSeo },
+];
+
 const HeroSection = () => (
   <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(174,72%,52%,0.08),transparent_50%)]" />
     <div className="container max-w-4xl text-center relative z-10 px-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/10"
+      >
+        <img src={profileImg} alt="Ahmed Shehta Zoghli" className="w-full h-full object-cover object-top" />
+      </motion.div>
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -140,6 +168,42 @@ const EducationSection = () => (
   </section>
 );
 
+const ProjectsSection = () => (
+  <section className="py-24 px-6">
+    <div className="container max-w-5xl">
+      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
+        <div className="section-divider mb-6" />
+        <h2 className="text-3xl font-bold mb-10">Projects</h2>
+      </motion.div>
+      <div className="grid md:grid-cols-2 gap-6">
+        {projects.map((project, i) => (
+          <motion.div
+            key={project.title}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={i + 1}
+            className="group rounded-xl overflow-hidden border border-border bg-card hover:border-primary/40 transition-colors"
+          >
+            <div className="aspect-video overflow-hidden">
+              <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div className="p-5">
+              <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
 const SkillsSection = () => (
   <section className="py-24 px-6 bg-card/50">
     <div className="container max-w-3xl">
@@ -172,6 +236,7 @@ const Index = () => {
       <SummarySection />
       <ExperienceSection />
       <EducationSection />
+      <ProjectsSection />
       <SkillsSection />
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border">
         <p>© 2026 Ahmed Shehta Zoghli Osman. All rights reserved.</p>
