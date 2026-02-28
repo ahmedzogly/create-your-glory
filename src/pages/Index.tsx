@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, Camera, Loader2 } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
+import { ImageCropper } from "@/components/ImageCropper";
 import profileImg from "@/assets/profile.jpg";
 import projectDb from "@/assets/project-db.png";
 import projectAnalysis from "@/assets/project-analysis.jpg";
@@ -48,10 +49,25 @@ const projects = [
 const HeroSection = () => {
   const { imageUrl, uploading, upload } = useProfileImage(profileImg);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [rawImage, setRawImage] = useState<string>("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) upload(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setRawImage(reader.result as string);
+        setCropperOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCrop = (blob: Blob) => {
+    setCropperOpen(false);
+    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+    upload(file);
   };
 
   return (
@@ -71,6 +87,7 @@ const HeroSection = () => {
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </motion.div>
+        <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
