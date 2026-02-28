@@ -1,5 +1,7 @@
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Camera, Loader2 } from "lucide-react";
+import { useProfileImage } from "@/hooks/use-profile-image";
 import profileImg from "@/assets/profile.jpg";
 import projectDb from "@/assets/project-db.png";
 import projectAnalysis from "@/assets/project-analysis.jpg";
@@ -43,65 +45,80 @@ const projects = [
   { title: "Customer Churn — Key Insights", description: "Python-based churn analysis with key insights: 26.5% churn rate, high-risk segments identification, and actionable recommendations.", image: projectChurn3 },
 ];
 
-const HeroSection = () => (
-  <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(174,72%,52%,0.08),transparent_50%)]" />
-    <div className="container max-w-4xl text-center relative z-10 px-6">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/10"
-      >
-        <img src={profileImg} alt="Ahmed Shehta Zoghli" className="w-full h-full object-cover object-top" />
-      </motion.div>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="text-primary font-medium tracking-widest uppercase text-sm mb-6"
-      >
-        Data Analyst
-      </motion.p>
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
-      >
-        Ahmed Shehta{" "}
-        <span className="text-gradient">Zoghli</span>
-      </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
-      >
-        Transforming raw data into actionable insights. Skilled in Excel, Python, Power BI, Machine Learning, and Statistical Analysis.
-      </motion.p>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-muted-foreground"
-      >
-        <a href="mailto:ahmedzogly26@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors">
-          <Mail size={16} /> ahmedzogly26@gmail.com
-        </a>
-        <span className="flex items-center gap-2">
-          <Phone size={16} /> 01097401429
-        </span>
-        <span className="flex items-center gap-2">
-          <MapPin size={16} /> Cairo, Egypt
-        </span>
-        <a href="https://www.linkedin.com/in/ahmed-shehta-zoghli" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
-          <Linkedin size={16} /> LinkedIn
-        </a>
-      </motion.div>
-    </div>
-  </section>
-);
+const HeroSection = () => {
+  const { imageUrl, uploading, upload } = useProfileImage(profileImg);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) upload(file);
+  };
+
+  return (
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(174,72%,52%,0.08),transparent_50%)]" />
+      <div className="container max-w-4xl text-center relative z-10 px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/10 relative group cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <img src={imageUrl} alt="Ahmed Shehta Zoghli" className="w-full h-full object-cover object-top" />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            {uploading ? <Loader2 size={24} className="text-white animate-spin" /> : <Camera size={24} className="text-white" />}
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-primary font-medium tracking-widest uppercase text-sm mb-6"
+        >
+          Data Analyst
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
+        >
+          Ahmed Shehta{" "}
+          <span className="text-gradient">Zoghli</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
+        >
+          Transforming raw data into actionable insights. Skilled in Excel, Python, Power BI, Machine Learning, and Statistical Analysis.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-muted-foreground"
+        >
+          <a href="mailto:ahmedzogly26@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Mail size={16} /> ahmedzogly26@gmail.com
+          </a>
+          <span className="flex items-center gap-2">
+            <Phone size={16} /> 01097401429
+          </span>
+          <span className="flex items-center gap-2">
+            <MapPin size={16} /> Cairo, Egypt
+          </span>
+          <a href="https://www.linkedin.com/in/ahmed-shehta-zoghli" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Linkedin size={16} /> LinkedIn
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 const SummarySection = () => (
   <section className="py-24 px-6">
