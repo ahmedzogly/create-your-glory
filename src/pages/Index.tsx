@@ -9,6 +9,9 @@ import projectHr2 from "@/assets/project-hr2.png";
 import projectPizza1 from "@/assets/project-pizza1.png";
 import projectHr3 from "@/assets/project-hr3.png";
 import projectPizza2 from "@/assets/project-pizza2.png";
+import projectChurn1 from "@/assets/project-churn1.png";
+import projectChurn2 from "@/assets/project-churn2.png";
+import projectChurn3 from "@/assets/project-churn3.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -35,6 +38,9 @@ const projects = [
   { title: "Pizza Sales Dashboard — Power BI", description: "Power BI version with interactive slicers for pizza size, category, and quantity analysis.", image: projectPizza2 },
   { title: "Data Analytics Overview", description: "Traffic analysis dashboard with visitor insights, page views, and content performance metrics.", image: projectAnalysis },
   { title: "SEO Performance Dashboard", description: "SEO metrics tracking organic traffic growth, keyword rankings, backlinks, and domain authority.", image: projectSeo },
+  { title: "Customer Churn Analysis — EDA", description: "Exploratory data analysis of customer churn with distribution, gender, contract type, and internet service breakdowns.", image: projectChurn1 },
+  { title: "Customer Churn — ML Models", description: "Machine Learning model comparison (Logistic Regression vs Random Forest) with ROC curves, confusion matrix, and feature importance.", image: projectChurn2 },
+  { title: "Customer Churn — Key Insights", description: "Python-based churn analysis with key insights: 26.5% churn rate, high-risk segments identification, and actionable recommendations.", image: projectChurn3 },
 ];
 
 const HeroSection = () => (
