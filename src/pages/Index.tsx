@@ -1,16 +1,19 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin, Camera, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
 import { ImageCropper } from "@/components/ImageCropper";
 import { PromoSection } from "@/components/PromoSection";
+import { Navbar } from "@/components/Navbar";
+import { TypingText } from "@/components/TypingText";
+import { StatsSection } from "@/components/StatsSection";
+import { ProjectsSection } from "@/components/ProjectsSection";
 import {
   useSiteContent,
   useExperiences,
   useEducation,
   useProjects,
   useSkills,
-  type Project,
 } from "@/hooks/use-site-data";
 import profileImg from "@/assets/profile.jpg";
 
@@ -21,16 +24,6 @@ const fadeUp = {
     y: 0,
     transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" as const },
   }),
-};
-
-const resolveImage = (url: string) => {
-  if (!url) return "";
-  if (url.startsWith("http") || url.startsWith("data:")) return url;
-  if (url.startsWith("/src/assets/")) {
-    const filename = url.replace("/src/assets/", "");
-    return new URL(`../assets/${filename}`, import.meta.url).href;
-  }
-  return url;
 };
 
 const HeroSection = ({ content }: { content: Record<string, string> }) => {
@@ -61,9 +54,19 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
   const [firstName, ...rest] = fullName.split(" ");
   const lastName = rest.join(" ");
 
+  const role = content.hero_role ?? "";
+  const typingWords = role
+    .split(/[|•/,]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(174,72%,52%,0.08),transparent_50%)]" />
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
+      {/* Animated grid background */}
+      <div className="absolute inset-0 grid-pattern opacity-60" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.12),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(190,80%,65%,0.08),transparent_50%)]" />
+
       <div className="container max-w-4xl text-center relative z-10 px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -79,12 +82,21 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
-        <motion.p
+
+        <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
-          className="text-primary font-medium tracking-widest uppercase text-sm mb-6"
+          className="mb-6 min-h-[28px]"
         >
-          {content.hero_role}
-        </motion.p>
+          {typingWords.length > 0 ? (
+            <TypingText
+              words={typingWords}
+              className="text-primary font-medium tracking-widest uppercase text-sm"
+            />
+          ) : (
+            <span className="text-primary font-medium tracking-widest uppercase text-sm">{role}</span>
+          )}
+        </motion.div>
+
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
           className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
@@ -115,12 +127,23 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           )}
         </motion.div>
       </div>
+
+      <motion.button
+        onClick={() => document.getElementById("summary")?.scrollIntoView({ behavior: "smooth" })}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, y: [0, 8, 0] }}
+        transition={{ opacity: { delay: 1.2 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors"
+        aria-label="Scroll down"
+      >
+        <ArrowDown size={22} />
+      </motion.button>
     </section>
   );
 };
 
 const SummarySection = ({ summary }: { summary: string }) => (
-  <section className="py-24 px-6">
+  <section id="summary" className="py-24 px-6 scroll-mt-20">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
@@ -134,7 +157,7 @@ const SummarySection = ({ summary }: { summary: string }) => (
 );
 
 const ExperienceSection = ({ items }: { items: any[] }) => (
-  <section className="py-24 px-6 bg-card/50">
+  <section id="experience" className="py-24 px-6 bg-card/50 scroll-mt-20">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
@@ -166,7 +189,7 @@ const ExperienceSection = ({ items }: { items: any[] }) => (
 );
 
 const EducationSection = ({ items }: { items: any[] }) => (
-  <section className="py-24 px-6">
+  <section id="education" className="py-24 px-6 scroll-mt-20">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
@@ -190,37 +213,8 @@ const EducationSection = ({ items }: { items: any[] }) => (
   </section>
 );
 
-const ProjectsSection = ({ items }: { items: Project[] }) => (
-  <section className="py-24 px-6">
-    <div className="container max-w-5xl">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-        <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Projects</h2>
-      </motion.div>
-      <div className="grid md:grid-cols-2 gap-6">
-        {items.map((project, i) => (
-          <motion.div
-            key={project.id}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-            className="group rounded-xl overflow-hidden border border-border bg-card hover:border-primary/40 transition-colors"
-          >
-            <div className="aspect-video overflow-hidden">
-              <img src={resolveImage(project.image_url)} alt={project.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="p-5">
-              <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
 const SkillsSection = ({ items }: { items: any[] }) => (
-  <section className="py-24 px-6 bg-card/50">
+  <section id="skills" className="py-24 px-6 bg-card/50 scroll-mt-20">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
@@ -257,8 +251,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
+      <StatsSection
+        experienceCount={experiences.length}
+        projectsCount={projects.length}
+        educationCount={education.length}
+      />
       <ExperienceSection items={experiences} />
       <EducationSection items={education} />
       <ProjectsSection items={projects} />
