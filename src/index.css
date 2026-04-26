@@ -5,7 +5,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 @layer base {
-  :root {
+  :root,
+  .dark {
     --background: 220 20% 7%;
     --foreground: 210 20% 92%;
 
@@ -45,6 +46,45 @@
     --sidebar-border: 220 14% 18%;
     --sidebar-ring: 174 72% 52%;
   }
+
+  .light {
+    --background: 210 30% 98%;
+    --foreground: 220 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 12%;
+
+    --primary: 174 72% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 220 25% 18%;
+
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 174 72% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 14% 88%;
+    --input: 220 14% 88%;
+    --ring: 174 72% 38%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 12%;
+    --sidebar-primary: 174 72% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: 220 25% 18%;
+    --sidebar-border: 220 14% 88%;
+    --sidebar-ring: 174 72% 38%;
+  }
 }
 
 @layer base {
@@ -68,5 +108,13 @@
 
   .section-divider {
     @apply w-16 h-0.5 bg-primary;
+  }
+
+  .grid-pattern {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 40%, black 30%, transparent 80%);
   }
 }
