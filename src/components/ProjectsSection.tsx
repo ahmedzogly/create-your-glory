@@ -49,10 +49,10 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
                 key={cat}
                 onClick={() => setActive(cat)}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-all border",
+                  "px-4 py-2 rounded-full text-sm font-medium transition-all",
                   active === cat
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30"
-                    : "bg-transparent text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                    ? "bg-gradient-primary text-primary-foreground shadow-glow-sm"
+                    : "glass text-muted-foreground hover:text-foreground"
                 )}
               >
                 {cat}
@@ -73,22 +73,23 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 custom={i}
                 onClick={() => setSelected(project)}
-                className="group text-left rounded-xl overflow-hidden border border-border bg-card hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all"
+                className="group relative text-left rounded-2xl overflow-hidden glass glow-border hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="aspect-video overflow-hidden relative">
                   <img
                     src={resolveImage(project.image_url)}
                     alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
                   <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-background/80 backdrop-blur-sm border border-border/50 text-foreground">
+                    <span className="px-2.5 py-1 text-xs font-mono rounded-full glass-strong text-foreground">
                       {project.category || "Other"}
                     </span>
                   </div>
                 </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{project.title}</h3>
+                <div className="p-5 relative">
+                  <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{project.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
                 </div>
               </motion.button>

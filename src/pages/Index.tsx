@@ -61,22 +61,30 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
     .filter(Boolean);
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-      {/* Animated grid background */}
-      <div className="absolute inset-0 grid-pattern opacity-60" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.12),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(190,80%,65%,0.08),transparent_50%)]" />
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
+      {/* Layered atmospheric backgrounds */}
+      <div className="absolute inset-0 grid-pattern opacity-50" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
+
+      {/* Floating orbs */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/15 blur-[140px] animate-float" style={{ animationDelay: "2s" }} />
 
       <div className="container max-w-4xl text-center relative z-10 px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/10 relative group cursor-pointer"
+          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden relative group cursor-pointer animate-pulse-glow"
           onClick={() => fileInputRef.current?.click()}
         >
-          <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute inset-0 rounded-full bg-gradient-primary p-[2px]">
+            <div className="w-full h-full rounded-full overflow-hidden bg-background">
+              <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
+            </div>
+          </div>
+          <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             {uploading ? <Loader2 size={24} className="text-white animate-spin" /> : <Camera size={24} className="text-white" />}
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -84,24 +92,22 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
-          className="mb-6 min-h-[28px]"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+          className="mb-6 min-h-[28px] inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase"
         >
+          <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))] animate-pulse" />
           {typingWords.length > 0 ? (
-            <TypingText
-              words={typingWords}
-              className="text-primary font-medium tracking-widest uppercase text-sm"
-            />
+            <TypingText words={typingWords} className="text-foreground" />
           ) : (
-            <span className="text-primary font-medium tracking-widest uppercase text-sm">{role}</span>
+            <span className="text-foreground">{role}</span>
           )}
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
+          className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]"
         >
-          {firstName} <span className="text-gradient">{lastName}</span>
+          {firstName} <span className="text-gradient-glow animate-gradient bg-gradient-primary">{lastName}</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
@@ -111,18 +117,18 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-muted-foreground"
+          className="flex flex-wrap items-center justify-center gap-3 mt-10 text-sm"
         >
           {content.contact_email && (
-            <a href={`mailto:${content.contact_email}`} className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Mail size={16} /> {content.contact_email}
+            <a href={`mailto:${content.contact_email}`} className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
+              <Mail size={14} /> {content.contact_email}
             </a>
           )}
-          {content.contact_phone && <span className="flex items-center gap-2"><Phone size={16} /> {content.contact_phone}</span>}
-          {content.contact_location && <span className="flex items-center gap-2"><MapPin size={16} /> {content.contact_location}</span>}
+          {content.contact_phone && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><Phone size={14} /> {content.contact_phone}</span>}
+          {content.contact_location && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><MapPin size={14} /> {content.contact_location}</span>}
           {content.contact_linkedin && (
-            <a href={content.contact_linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Linkedin size={16} /> LinkedIn
+            <a href={content.contact_linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
+              <Linkedin size={14} /> LinkedIn
             </a>
           )}
         </motion.div>
@@ -133,10 +139,10 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 8, 0] }}
         transition={{ opacity: { delay: 1.2 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
         aria-label="Scroll down"
       >
-        <ArrowDown size={22} />
+        <ArrowDown size={18} />
       </motion.button>
     </section>
   );

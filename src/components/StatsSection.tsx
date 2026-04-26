@@ -39,9 +39,9 @@ export const StatsSection = ({ experienceCount, projectsCount, educationCount }:
   ];
 
   return (
-    <section className="py-20 px-6 border-y border-border/40 bg-card/30">
+    <section className="py-20 px-6 relative">
       <div className="container max-w-5xl">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
@@ -49,16 +49,16 @@ export const StatsSection = ({ experienceCount, projectsCount, educationCount }:
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="text-center group"
+              className="relative text-center group rounded-2xl p-6 glass glow-border hover:-translate-y-1 transition-transform duration-300"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-primary text-primary-foreground mb-4 shadow-glow-sm group-hover:scale-110 transition-transform">
                 <s.icon size={22} />
               </div>
               <div className="text-3xl md:text-4xl font-display font-bold text-foreground">
                 <Counter to={s.value} />
-                <span className="text-primary">{s.suffix}</span>
+                <span className="text-gradient">{s.suffix}</span>
               </div>
-              <p className="text-muted-foreground text-sm mt-2">{s.label}</p>
+              <p className="text-muted-foreground text-xs md:text-sm mt-2 tracking-wide uppercase">{s.label}</p>
             </motion.div>
           ))}
         </div>
