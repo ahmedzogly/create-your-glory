@@ -61,22 +61,30 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
     .filter(Boolean);
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-      {/* Animated grid background */}
-      <div className="absolute inset-0 grid-pattern opacity-60" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.12),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(190,80%,65%,0.08),transparent_50%)]" />
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
+      {/* Layered atmospheric backgrounds */}
+      <div className="absolute inset-0 grid-pattern opacity-50" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
+
+      {/* Floating orbs */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/15 blur-[140px] animate-float" style={{ animationDelay: "2s" }} />
 
       <div className="container max-w-4xl text-center relative z-10 px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/10 relative group cursor-pointer"
+          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden relative group cursor-pointer animate-pulse-glow"
           onClick={() => fileInputRef.current?.click()}
         >
-          <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute inset-0 rounded-full bg-gradient-primary p-[2px]">
+            <div className="w-full h-full rounded-full overflow-hidden bg-background">
+              <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
+            </div>
+          </div>
+          <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             {uploading ? <Loader2 size={24} className="text-white animate-spin" /> : <Camera size={24} className="text-white" />}
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -84,24 +92,22 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
-          className="mb-6 min-h-[28px]"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+          className="mb-6 min-h-[28px] inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase"
         >
+          <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))] animate-pulse" />
           {typingWords.length > 0 ? (
-            <TypingText
-              words={typingWords}
-              className="text-primary font-medium tracking-widest uppercase text-sm"
-            />
+            <TypingText words={typingWords} className="text-foreground" />
           ) : (
-            <span className="text-primary font-medium tracking-widest uppercase text-sm">{role}</span>
+            <span className="text-foreground">{role}</span>
           )}
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
+          className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]"
         >
-          {firstName} <span className="text-gradient">{lastName}</span>
+          {firstName} <span className="text-gradient-glow animate-gradient bg-gradient-primary">{lastName}</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
@@ -111,18 +117,18 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-muted-foreground"
+          className="flex flex-wrap items-center justify-center gap-3 mt-10 text-sm"
         >
           {content.contact_email && (
-            <a href={`mailto:${content.contact_email}`} className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Mail size={16} /> {content.contact_email}
+            <a href={`mailto:${content.contact_email}`} className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
+              <Mail size={14} /> {content.contact_email}
             </a>
           )}
-          {content.contact_phone && <span className="flex items-center gap-2"><Phone size={16} /> {content.contact_phone}</span>}
-          {content.contact_location && <span className="flex items-center gap-2"><MapPin size={16} /> {content.contact_location}</span>}
+          {content.contact_phone && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><Phone size={14} /> {content.contact_phone}</span>}
+          {content.contact_location && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><MapPin size={14} /> {content.contact_location}</span>}
           {content.contact_linkedin && (
-            <a href={content.contact_linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <Linkedin size={16} /> LinkedIn
+            <a href={content.contact_linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
+              <Linkedin size={14} /> LinkedIn
             </a>
           )}
         </motion.div>
@@ -133,54 +139,67 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 8, 0] }}
         transition={{ opacity: { delay: 1.2 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
         aria-label="Scroll down"
       >
-        <ArrowDown size={22} />
+        <ArrowDown size={18} />
       </motion.button>
     </section>
   );
 };
 
 const SummarySection = ({ summary }: { summary: string }) => (
-  <section id="summary" className="py-24 px-6 scroll-mt-20">
+  <section id="summary" className="py-24 px-6 scroll-mt-20 relative">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-6">Summary</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">About <span className="text-gradient">Me</span></h2>
       </motion.div>
-      <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-muted-foreground leading-relaxed text-lg">
-        {summary}
-      </motion.p>
+      <motion.div
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+        className="relative p-8 md:p-10 rounded-2xl glass"
+      >
+        <p className="text-muted-foreground leading-relaxed text-lg">{summary}</p>
+      </motion.div>
     </div>
   </section>
 );
 
 const ExperienceSection = ({ items }: { items: any[] }) => (
-  <section id="experience" className="py-24 px-6 bg-card/50 scroll-mt-20">
-    <div className="container max-w-3xl">
+  <section id="experience" className="py-24 px-6 scroll-mt-20 relative">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_60%)]" />
+    <div className="container max-w-3xl relative">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Work Experience</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10">Work <span className="text-gradient">Experience</span></h2>
       </motion.div>
-      <div className="space-y-12">
+      <div className="relative space-y-6 before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-primary/60 before:via-accent/40 before:to-transparent">
         {items.map((exp, idx) => (
-          <motion.div key={exp.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-              <div>
-                <h3 className="text-xl font-semibold">{exp.title}</h3>
-                <p className="text-primary text-sm font-medium">{exp.company}</p>
+          <motion.div
+            key={exp.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+            className="relative pl-10 md:pl-14"
+          >
+            <span className="absolute left-0 md:left-1 top-6 w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-primary shadow-glow-sm flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-background" />
+            </span>
+            <div className="rounded-2xl glass p-6 hover:-translate-y-0.5 transition-transform">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-1">
+                <div>
+                  <h3 className="text-xl font-semibold">{exp.title}</h3>
+                  <p className="text-gradient text-sm font-medium">{exp.company}</p>
+                </div>
+                <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0">{exp.period}</span>
               </div>
-              <span className="text-muted-foreground text-sm mt-1 md:mt-0 shrink-0">{exp.period}</span>
+              <ul className="space-y-2 text-muted-foreground text-sm">
+                {exp.bullets.map((item: string, i: number) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary))]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-3 text-muted-foreground">
-              {exp.bullets.map((item: string, i: number) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </motion.div>
         ))}
       </div>
@@ -193,19 +212,23 @@ const EducationSection = ({ items }: { items: any[] }) => (
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Education</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Education</span></h2>
       </motion.div>
-      <div className="space-y-8">
+      <div className="grid gap-5">
         {items.map((edu, idx) => (
-          <motion.div key={edu.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+          <motion.div
+            key={edu.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+            className="rounded-2xl glass glow-border p-6 hover:-translate-y-0.5 transition-transform"
+          >
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
               <div>
                 <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                <p className="text-primary text-sm font-medium">{edu.school}</p>
+                <p className="text-gradient text-sm font-medium">{edu.school}</p>
               </div>
-              <span className="text-muted-foreground text-sm mt-1 md:mt-0 shrink-0">{edu.period}</span>
+              <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0">{edu.period}</span>
             </div>
-            {edu.description && <p className="text-muted-foreground mt-3">{edu.description}</p>}
+            {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
           </motion.div>
         ))}
       </div>
@@ -214,19 +237,24 @@ const EducationSection = ({ items }: { items: any[] }) => (
 );
 
 const SkillsSection = ({ items }: { items: any[] }) => (
-  <section id="skills" className="py-24 px-6 bg-card/50 scroll-mt-20">
-    <div className="container max-w-3xl">
+  <section id="skills" className="py-24 px-6 scroll-mt-20 relative">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,hsl(var(--accent)/0.06),transparent_60%)]" />
+    <div className="container max-w-3xl relative">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Skills</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Skills</span> & Stack</h2>
       </motion.div>
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-5">
         {items.map((group, i) => (
-          <motion.div key={group.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}>
-            <h3 className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">{group.category}</h3>
+          <motion.div
+            key={group.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+            className="rounded-2xl glass p-6"
+          >
+            <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{group.category}</h3>
             <div className="flex flex-wrap gap-2">
               {group.items.map((skill: string) => (
-                <span key={skill} className="px-3 py-1.5 bg-secondary text-secondary-foreground text-sm rounded-md">
+                <span key={skill} className="px-3 py-1.5 rounded-lg glass-strong text-foreground text-sm hover:text-gradient transition-colors">
                   {skill}
                 </span>
               ))}
@@ -250,7 +278,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
@@ -270,8 +298,8 @@ const Index = () => {
         projects={projects}
       />
       <SkillsSection items={skills} />
-      <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border">
-        <p>© 2026 {content.hero_title ?? ""}. All rights reserved.</p>
+      <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
+        <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>
     </div>
   );

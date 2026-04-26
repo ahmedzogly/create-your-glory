@@ -39,21 +39,21 @@ export const Navbar = ({ name }: { name: string }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           scrolled
-            ? "backdrop-blur-xl bg-background/70 border-b border-border/40 shadow-sm"
+            ? "glass-strong shadow-[0_8px_32px_-12px_hsl(var(--primary)/0.25)]"
             : "bg-transparent"
         )}
       >
         <div className="container max-w-6xl flex items-center justify-between h-16 px-6">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2 font-display font-bold text-lg"
+            className="flex items-center gap-2.5 font-display font-bold text-lg group"
           >
-            <span className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-[hsl(190,80%,65%)] flex items-center justify-center text-primary-foreground text-sm">
+            <span className="relative w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground text-sm shadow-glow-sm group-hover:shadow-glow transition-shadow">
               {initials || "P"}
             </span>
-            <span className="hidden sm:inline text-foreground">Portfolio</span>
+            <span className="hidden sm:inline text-foreground tracking-tight">Portfolio</span>
           </button>
 
           <nav className="hidden md:flex items-center gap-1">
@@ -109,7 +109,7 @@ export const Navbar = ({ name }: { name: string }) => {
 
       <motion.div
         style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-[hsl(190,80%,65%)] origin-left z-[60]"
+        className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-primary origin-left z-[60] shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
       />
     </>
   );
