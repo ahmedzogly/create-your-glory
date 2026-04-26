@@ -149,44 +149,57 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
 };
 
 const SummarySection = ({ summary }: { summary: string }) => (
-  <section id="summary" className="py-24 px-6 scroll-mt-20">
+  <section id="summary" className="py-24 px-6 scroll-mt-20 relative">
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-6">Summary</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">About <span className="text-gradient">Me</span></h2>
       </motion.div>
-      <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-muted-foreground leading-relaxed text-lg">
-        {summary}
-      </motion.p>
+      <motion.div
+        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+        className="relative p-8 md:p-10 rounded-2xl glass"
+      >
+        <p className="text-muted-foreground leading-relaxed text-lg">{summary}</p>
+      </motion.div>
     </div>
   </section>
 );
 
 const ExperienceSection = ({ items }: { items: any[] }) => (
-  <section id="experience" className="py-24 px-6 bg-card/50 scroll-mt-20">
-    <div className="container max-w-3xl">
+  <section id="experience" className="py-24 px-6 scroll-mt-20 relative">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_60%)]" />
+    <div className="container max-w-3xl relative">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Work Experience</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10">Work <span className="text-gradient">Experience</span></h2>
       </motion.div>
-      <div className="space-y-12">
+      <div className="relative space-y-6 before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-primary/60 before:via-accent/40 before:to-transparent">
         {items.map((exp, idx) => (
-          <motion.div key={exp.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-              <div>
-                <h3 className="text-xl font-semibold">{exp.title}</h3>
-                <p className="text-primary text-sm font-medium">{exp.company}</p>
+          <motion.div
+            key={exp.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+            className="relative pl-10 md:pl-14"
+          >
+            <span className="absolute left-0 md:left-1 top-6 w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-primary shadow-glow-sm flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-background" />
+            </span>
+            <div className="rounded-2xl glass p-6 hover:-translate-y-0.5 transition-transform">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-1">
+                <div>
+                  <h3 className="text-xl font-semibold">{exp.title}</h3>
+                  <p className="text-gradient text-sm font-medium">{exp.company}</p>
+                </div>
+                <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0">{exp.period}</span>
               </div>
-              <span className="text-muted-foreground text-sm mt-1 md:mt-0 shrink-0">{exp.period}</span>
+              <ul className="space-y-2 text-muted-foreground text-sm">
+                {exp.bullets.map((item: string, i: number) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary))]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-3 text-muted-foreground">
-              {exp.bullets.map((item: string, i: number) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </motion.div>
         ))}
       </div>
@@ -199,19 +212,23 @@ const EducationSection = ({ items }: { items: any[] }) => (
     <div className="container max-w-3xl">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Education</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Education</span></h2>
       </motion.div>
-      <div className="space-y-8">
+      <div className="grid gap-5">
         {items.map((edu, idx) => (
-          <motion.div key={edu.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+          <motion.div
+            key={edu.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+            className="rounded-2xl glass glow-border p-6 hover:-translate-y-0.5 transition-transform"
+          >
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
               <div>
                 <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                <p className="text-primary text-sm font-medium">{edu.school}</p>
+                <p className="text-gradient text-sm font-medium">{edu.school}</p>
               </div>
-              <span className="text-muted-foreground text-sm mt-1 md:mt-0 shrink-0">{edu.period}</span>
+              <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0">{edu.period}</span>
             </div>
-            {edu.description && <p className="text-muted-foreground mt-3">{edu.description}</p>}
+            {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
           </motion.div>
         ))}
       </div>
@@ -220,19 +237,24 @@ const EducationSection = ({ items }: { items: any[] }) => (
 );
 
 const SkillsSection = ({ items }: { items: any[] }) => (
-  <section id="skills" className="py-24 px-6 bg-card/50 scroll-mt-20">
-    <div className="container max-w-3xl">
+  <section id="skills" className="py-24 px-6 scroll-mt-20 relative">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,hsl(var(--accent)/0.06),transparent_60%)]" />
+    <div className="container max-w-3xl relative">
       <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
         <div className="section-divider mb-6" />
-        <h2 className="text-3xl font-bold mb-10">Skills</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Skills</span> & Stack</h2>
       </motion.div>
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-5">
         {items.map((group, i) => (
-          <motion.div key={group.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}>
-            <h3 className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">{group.category}</h3>
+          <motion.div
+            key={group.id}
+            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+            className="rounded-2xl glass p-6"
+          >
+            <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{group.category}</h3>
             <div className="flex flex-wrap gap-2">
               {group.items.map((skill: string) => (
-                <span key={skill} className="px-3 py-1.5 bg-secondary text-secondary-foreground text-sm rounded-md">
+                <span key={skill} className="px-3 py-1.5 rounded-lg glass-strong text-foreground text-sm hover:text-gradient transition-colors">
                   {skill}
                 </span>
               ))}
@@ -243,8 +265,6 @@ const SkillsSection = ({ items }: { items: any[] }) => (
     </div>
   </section>
 );
-
-const Index = () => {
   const { content, loading } = useSiteContent();
   const { items: experiences } = useExperiences();
   const { items: education } = useEducation();
