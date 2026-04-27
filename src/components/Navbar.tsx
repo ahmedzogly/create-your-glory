@@ -79,6 +79,36 @@ export const Navbar = ({ name }: { name: string }) => {
             >
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
+
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-sm font-medium bg-gradient-primary text-primary-foreground shadow-glow-sm hover:shadow-glow transition-shadow"
+                  >
+                    <LayoutDashboard size={15} />
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={signOut}
+                  aria-label="Sign out"
+                  className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-foreground transition-colors"
+                >
+                  <LogOut size={18} />
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-sm font-medium border border-primary/30 text-foreground hover:bg-primary/10 hover:border-primary/60 transition-colors"
+              >
+                <LogIn size={15} />
+                <span className="hidden sm:inline">Login</span>
+              </Link>
+            )}
+
             <button
               onClick={() => setOpen((o) => !o)}
               aria-label="Menu"
