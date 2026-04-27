@@ -279,8 +279,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen relative">
       <WebGLBackground />
+      <div className="relative z-10">
       <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
@@ -303,6 +304,7 @@ const Index = () => {
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
         <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>
+      </div>
     </div>
   );
 };
