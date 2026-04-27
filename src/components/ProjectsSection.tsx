@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import type { Project } from "@/hooks/use-site-data";
 import { cn } from "@/lib/utils";
+import { LiquidSphere } from "@/components/LiquidSphere";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
