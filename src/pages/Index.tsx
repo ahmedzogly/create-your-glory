@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { StatsSection } from "@/components/StatsSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { WebGLBackground } from "@/components/WebGLBackground";
 import {
   useSiteContent,
   useExperiences,
@@ -279,6 +280,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <WebGLBackground />
       <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
