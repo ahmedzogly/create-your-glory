@@ -21,6 +21,7 @@ export type Database = {
           description: string | null
           display_order: number
           id: string
+          image_url: string | null
           period: string
           school: string
           updated_at: string
@@ -31,6 +32,7 @@ export type Database = {
           description?: string | null
           display_order?: number
           id?: string
+          image_url?: string | null
           period: string
           school: string
           updated_at?: string
@@ -41,6 +43,7 @@ export type Database = {
           description?: string | null
           display_order?: number
           id?: string
+          image_url?: string | null
           period?: string
           school?: string
           updated_at?: string
@@ -54,6 +57,7 @@ export type Database = {
           created_at: string
           display_order: number
           id: string
+          image_url: string | null
           period: string
           title: string
           updated_at: string
@@ -64,6 +68,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           period: string
           title: string
           updated_at?: string
@@ -74,6 +79,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           period?: string
           title?: string
           updated_at?: string
