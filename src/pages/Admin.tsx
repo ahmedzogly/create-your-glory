@@ -389,16 +389,32 @@ const EducationEditor = ({ items, onChanged }: { items: any[]; onChanged: () => 
 const EducationDialog = ({ open, onOpenChange, item, onSaved }: any) => {
   const [degree, setDegree] = useState(""); const [school, setSchool] = useState("");
   const [period, setPeriod] = useState(""); const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [order, setOrder] = useState(0); const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   useEffect(() => {
     setDegree(item?.degree ?? ""); setSchool(item?.school ?? "");
     setPeriod(item?.period ?? ""); setDescription(item?.description ?? "");
+    setImageUrl(item?.image_url ?? "");
     setOrder(item?.display_order ?? 0);
   }, [item, open]);
+  const uploadImage = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `education/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("site-images").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+      setImageUrl(data.publicUrl);
+      toast.success("Image uploaded");
+    } catch (e: any) { toast.error(e.message); }
+    finally { setUploading(false); }
+  };
   const save = async () => {
     setSaving(true);
     try {
-      const payload = { degree, school, period, description, display_order: order };
+      const payload = { degree, school, period, description, image_url: imageUrl || null, display_order: order };
       const { error } = item
         ? await supabase.from("education").update(payload).eq("id", item.id)
         : await supabase.from("education").insert(payload);
@@ -408,13 +424,23 @@ const EducationDialog = ({ open, onOpenChange, item, onSaved }: any) => {
   };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{item ? "Edit" : "New"} Education</DialogTitle></DialogHeader>
         <div className="space-y-3">
           <div><Label>Degree</Label><Input value={degree} onChange={(e) => setDegree(e.target.value)} /></div>
           <div><Label>School</Label><Input value={school} onChange={(e) => setSchool(e.target.value)} /></div>
           <div><Label>Period</Label><Input value={period} onChange={(e) => setPeriod(e.target.value)} /></div>
           <div><Label>Description</Label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} /></div>
+          <div>
+            <Label>Image / Logo (optional)</Label>
+            {imageUrl && <img src={imageUrl} alt="" className="w-full h-24 object-cover rounded mb-2 bg-muted" />}
+            <label className="flex items-center justify-center gap-2 border border-dashed border-border rounded-lg p-3 cursor-pointer hover:bg-muted/50">
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              <span className="text-sm">{uploading ? "Uploading..." : "Upload image"}</span>
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])} />
+            </label>
+            <Input className="mt-2" placeholder="Or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+          </div>
           <div><Label>Order</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
         </div>
         <DialogFooter><Button onClick={save} disabled={saving}>Save</Button></DialogFooter>
