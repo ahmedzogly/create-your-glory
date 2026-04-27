@@ -227,12 +227,17 @@ const EducationSection = ({ items }: { items: any[] }) => (
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
             className="rounded-2xl glass glow-border p-6 hover:-translate-y-0.5 transition-transform"
           >
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-              <div>
-                <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                <p className="text-gradient text-sm font-medium">{edu.school}</p>
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
+              <div className="flex items-center gap-3">
+                {edu.image_url && (
+                  <img src={edu.image_url} alt={edu.school} className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                )}
+                <div>
+                  <h3 className="text-xl font-semibold">{edu.degree}</h3>
+                  <p className="text-gradient text-sm font-medium">{edu.school}</p>
+                </div>
               </div>
-              <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0">{edu.period}</span>
+              <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{edu.period}</span>
             </div>
             {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
           </motion.div>
