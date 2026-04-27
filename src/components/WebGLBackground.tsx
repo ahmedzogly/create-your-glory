@@ -249,8 +249,8 @@ export const WebGLBackground = () => {
     <div
       ref={mountRef}
       aria-hidden="true"
-      className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ contain: "strict" }}
+      className="fixed inset-0 pointer-events-none"
+      style={{ contain: "strict", zIndex: 0 }}
     />
   );
 };
