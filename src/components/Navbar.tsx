@@ -16,6 +16,7 @@ const NAV_LINKS = [
 
 export const Navbar = ({ name }: { name: string }) => {
   const { theme, toggle } = useTheme();
+  const { user, isAdmin, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { scrollYProgress } = useScroll();
