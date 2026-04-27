@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import type { Project } from "@/hooks/use-site-data";
 import { cn } from "@/lib/utils";
+import { LiquidSphere } from "@/components/LiquidSphere";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -34,8 +35,14 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
   const filtered = active === "All" ? items : items.filter((p) => (p.category || "Other") === active);
 
   return (
-    <section id="projects" className="py-24 px-6 scroll-mt-20">
-      <div className="container max-w-5xl">
+    <section id="projects" className="py-24 px-6 scroll-mt-20 relative overflow-hidden">
+      {/* Liquid glass sphere — premium AI-inspired background */}
+      <div className="pointer-events-none absolute inset-0 -z-0 flex items-center justify-center opacity-70">
+        <LiquidSphere className="w-[680px] h-[680px] max-w-[90vw] max-h-[90vw]" />
+      </div>
+      <div className="absolute inset-0 -z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--background))_75%)]" />
+
+      <div className="container max-w-5xl relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <div className="section-divider mb-6" />
           <h2 className="text-3xl font-bold mb-4">Projects</h2>

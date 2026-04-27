@@ -2,8 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type SiteContent = Record<string, string>;
-export type Experience = { id: string; title: string; company: string; period: string; bullets: string[]; display_order: number };
-export type Education = { id: string; degree: string; school: string; period: string; description: string | null; display_order: number };
+export type Experience = { id: string; title: string; company: string; period: string; bullets: string[]; display_order: number; image_url?: string | null };
+export type Education = { id: string; degree: string; school: string; period: string; description: string | null; display_order: number; image_url?: string | null };
 export type Project = { id: string; title: string; description: string; image_url: string; display_order: number; category: string; link: string | null };
 export type Skill = { id: string; category: string; items: string[]; display_order: number };
 
