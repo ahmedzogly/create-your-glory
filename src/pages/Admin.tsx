@@ -175,6 +175,8 @@ const ProjectDialog = ({ open, onOpenChange, project, onSaved }: any) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [category, setCategory] = useState("");
+  const [link, setLink] = useState("");
   const [order, setOrder] = useState(0);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -183,6 +185,8 @@ const ProjectDialog = ({ open, onOpenChange, project, onSaved }: any) => {
     setTitle(project?.title ?? "");
     setDescription(project?.description ?? "");
     setImageUrl(project?.image_url ?? "");
+    setCategory(project?.category ?? "");
+    setLink(project?.link ?? "");
     setOrder(project?.display_order ?? 0);
   }, [project, open]);
 
@@ -203,7 +207,14 @@ const ProjectDialog = ({ open, onOpenChange, project, onSaved }: any) => {
   const save = async () => {
     setSaving(true);
     try {
-      const payload = { title, description, image_url: imageUrl, display_order: order };
+      const payload: any = {
+        title,
+        description,
+        image_url: imageUrl,
+        category: category || "Other",
+        link: link || null,
+        display_order: order,
+      };
       const { error } = project
         ? await supabase.from("projects").update(payload).eq("id", project.id)
         : await supabase.from("projects").insert(payload);
@@ -216,11 +227,13 @@ const ProjectDialog = ({ open, onOpenChange, project, onSaved }: any) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{project ? "Edit Project" : "New Project"}</DialogTitle></DialogHeader>
         <div className="space-y-4">
           <div><Label>Title</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
           <div><Label>Description</Label><Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} /></div>
+          <div><Label>Category</Label><Input placeholder="e.g. Power BI, Python, SQL" value={category} onChange={(e) => setCategory(e.target.value)} /></div>
+          <div><Label>Project Link (optional)</Label><Input placeholder="https://..." value={link} onChange={(e) => setLink(e.target.value)} /></div>
           <div>
             <Label>Image</Label>
             {imageUrl && <img src={imageUrl.startsWith("http") ? imageUrl : ""} alt="" className="w-full h-32 object-cover rounded mb-2 bg-muted" />}
@@ -229,6 +242,7 @@ const ProjectDialog = ({ open, onOpenChange, project, onSaved }: any) => {
               <span className="text-sm">{uploading ? "Uploading..." : "Upload image"}</span>
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])} />
             </label>
+            <Input className="mt-2" placeholder="Or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
           </div>
           <div><Label>Display Order</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
         </div>
