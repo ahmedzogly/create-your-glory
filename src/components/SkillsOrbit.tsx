@@ -1,22 +1,15 @@
 import { motion } from "framer-motion";
-import { BarChart3, Database, Code2, PieChart, Brain, TrendingUp, Table2, FileSpreadsheet } from "lucide-react";
-
-const skills = [
-  { icon: BarChart3, label: "Power BI", color: "hsl(45 100% 60%)" },
-  { icon: Database, label: "SQL", color: "hsl(200 90% 60%)" },
-  { icon: Code2, label: "Python", color: "hsl(140 70% 55%)" },
-  { icon: PieChart, label: "Tableau", color: "hsl(25 95% 60%)" },
-  { icon: Brain, label: "ML", color: "hsl(280 80% 65%)" },
-  { icon: TrendingUp, label: "Analytics", color: "hsl(180 85% 55%)" },
-  { icon: Table2, label: "Excel", color: "hsl(150 70% 50%)" },
-  { icon: FileSpreadsheet, label: "Data", color: "hsl(320 75% 65%)" },
-];
+import * as Icons from "lucide-react";
+import { useOrbitSkills } from "@/hooks/use-site-data";
 
 interface Props {
   children: React.ReactNode;
 }
 
 export const SkillsOrbit = ({ children }: Props) => {
+  const { items } = useOrbitSkills();
+  const skills = items.length > 0 ? items : [];
+
   return (
     <div className="relative w-[320px] h-[320px] md:w-[420px] md:h-[420px] mx-auto flex items-center justify-center">
       {/* Rotating tech rings */}
@@ -58,40 +51,42 @@ export const SkillsOrbit = ({ children }: Props) => {
       {/* Profile image in center */}
       <div className="relative z-10">{children}</div>
 
-      {/* Orbiting skill icons */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, ease: "linear", repeat: Infinity }}
-      >
-        {skills.map((skill, i) => {
-          const angle = (i / skills.length) * Math.PI * 2;
-          const radius = 50; // percentage
-          const x = 50 + radius * Math.cos(angle);
-          const y = 50 + radius * Math.sin(angle);
-          const Icon = skill.icon;
-          return (
-            <motion.div
-              key={skill.label}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${x}%`, top: `${y}%` }}
-              animate={{ rotate: -360 }}
-              transition={{ duration: 30, ease: "linear", repeat: Infinity }}
-            >
+      {/* Orbiting skill labels */}
+      {skills.length > 0 && (
+        <motion.div
+          className="absolute inset-0"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+        >
+          {skills.map((skill, i) => {
+            const angle = (i / skills.length) * Math.PI * 2;
+            const radius = 50;
+            const x = 50 + radius * Math.cos(angle);
+            const y = 50 + radius * Math.sin(angle);
+            const Icon = (Icons as any)[skill.icon] ?? Icons.Sparkles;
+            return (
               <motion.div
-                className="group relative flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-xl glass-strong border border-border/50 backdrop-blur-md"
-                whileHover={{ scale: 1.2 }}
-                style={{ boxShadow: `0 0 20px ${skill.color}40` }}
+                key={skill.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${x}%`, top: `${y}%` }}
+                animate={{ rotate: -360 }}
+                transition={{ duration: 30, ease: "linear", repeat: Infinity }}
               >
-                <Icon size={20} style={{ color: skill.color }} />
-                <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-foreground">
-                  {skill.label}
-                </span>
+                <motion.div
+                  className="group relative flex items-center gap-2 px-3 py-2 rounded-full glass-strong border border-border/50 backdrop-blur-md"
+                  whileHover={{ scale: 1.15 }}
+                  style={{ boxShadow: `0 0 20px ${skill.color}40` }}
+                >
+                  <Icon size={16} style={{ color: skill.color }} />
+                  <span className="text-[11px] font-mono tracking-wider uppercase text-foreground whitespace-nowrap">
+                    {skill.label}
+                  </span>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+            );
+          })}
+        </motion.div>
+      )}
 
       {/* Floating particles */}
       {[...Array(6)].map((_, i) => (

@@ -6,6 +6,8 @@ export type Experience = { id: string; title: string; company: string; period: s
 export type Education = { id: string; degree: string; school: string; period: string; description: string | null; display_order: number; image_url?: string | null };
 export type Project = { id: string; title: string; description: string; image_url: string; display_order: number; category: string; link: string | null };
 export type Skill = { id: string; category: string; items: string[]; display_order: number };
+export type Certificate = { id: string; title: string; issuer: string; description: string | null; image_url: string; link: string | null; display_order: number };
+export type OrbitSkill = { id: string; label: string; icon: string; color: string; display_order: number };
 
 export const useSiteContent = () => {
   const [content, setContent] = useState<SiteContent>({});
@@ -60,6 +62,26 @@ export const useSkills = () => {
   const fetch = useCallback(async () => {
     const { data } = await supabase.from("skills").select("*").order("display_order");
     if (data) setItems(data as Skill[]);
+  }, []);
+  useEffect(() => { fetch(); }, [fetch]);
+  return { items, refetch: fetch };
+};
+
+export const useCertificates = () => {
+  const [items, setItems] = useState<Certificate[]>([]);
+  const fetch = useCallback(async () => {
+    const { data } = await supabase.from("certificates").select("*").order("display_order");
+    if (data) setItems(data as Certificate[]);
+  }, []);
+  useEffect(() => { fetch(); }, [fetch]);
+  return { items, refetch: fetch };
+};
+
+export const useOrbitSkills = () => {
+  const [items, setItems] = useState<OrbitSkill[]>([]);
+  const fetch = useCallback(async () => {
+    const { data } = await supabase.from("orbit_skills").select("*").order("display_order");
+    if (data) setItems(data as OrbitSkill[]);
   }, []);
   useEffect(() => { fetch(); }, [fetch]);
   return { items, refetch: fetch };

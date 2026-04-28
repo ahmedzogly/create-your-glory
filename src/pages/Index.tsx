@@ -2,9 +2,11 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
+import { useAuth } from "@/hooks/use-auth";
 import { ImageCropper } from "@/components/ImageCropper";
 import { PromoSection } from "@/components/PromoSection";
 import { SkillsOrbit } from "@/components/SkillsOrbit";
+import { ContactSection } from "@/components/ContactSection";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { StatsSection } from "@/components/StatsSection";
@@ -30,6 +32,7 @@ const fadeUp = {
 
 const HeroSection = ({ content }: { content: Record<string, string> }) => {
   const { imageUrl, uploading, upload } = useProfileImage(profileImg);
+  const { isAdmin } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [cropperOpen, setCropperOpen] = useState(false);
   const [rawImage, setRawImage] = useState<string>("");
@@ -82,18 +85,22 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         >
           <SkillsOrbit>
             <div
-              className="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative group cursor-pointer animate-pulse-glow"
-              onClick={() => fileInputRef.current?.click()}
+              className={`w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative group animate-pulse-glow ${isAdmin ? "cursor-pointer" : ""}`}
+              onClick={isAdmin ? () => fileInputRef.current?.click() : undefined}
             >
               <div className="absolute inset-0 rounded-full bg-gradient-primary p-[3px]">
                 <div className="w-full h-full rounded-full overflow-hidden bg-background">
                   <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
                 </div>
               </div>
-              <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                {uploading ? <Loader2 size={28} className="text-white animate-spin" /> : <Camera size={28} className="text-white" />}
-              </div>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              {isAdmin && (
+                <>
+                  <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {uploading ? <Loader2 size={28} className="text-white animate-spin" /> : <Camera size={28} className="text-white" />}
+                  </div>
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                </>
+              )}
             </div>
           </SkillsOrbit>
         </motion.div>
@@ -318,6 +325,13 @@ const Index = () => {
         projects={projects}
       />
       <SkillsSection items={skills} />
+      <ContactSection
+        email={content.contact_email}
+        phone={content.contact_phone}
+        location={content.contact_location}
+        linkedin={content.contact_linkedin}
+        github={content.contact_github}
+      />
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
         <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>
