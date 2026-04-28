@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
+import { useCertificates } from "@/hooks/use-site-data";
 import certFoundations from "@/assets/certificates/cert-foundations.jpg";
 import certAskQuestions from "@/assets/certificates/cert-ask-questions.jpg";
 import certPrepareData from "@/assets/certificates/cert-prepare-data.jpg";
@@ -10,21 +12,28 @@ import certCapstone from "@/assets/certificates/cert-capstone.jpg";
 import certJobSearch from "@/assets/certificates/cert-job-search.jpg";
 import certProfessional from "@/assets/certificates/cert-professional.jpg";
 
-const certificates = [
-  { img: certProfessional, title: "Google Data Analytics", issuer: "Professional Certificate" },
-  { img: certFoundations, title: "Foundations: Data, Data, Everywhere", issuer: "Google / Coursera" },
-  { img: certAskQuestions, title: "Ask Questions to Make Data-Driven Decisions", issuer: "Google / Coursera" },
-  { img: certPrepareData, title: "Prepare Data for Exploration", issuer: "Google / Coursera" },
-  { img: certProcessData, title: "Process Data from Dirty to Clean", issuer: "Google / Coursera" },
-  { img: certAnalyzeData, title: "Analyze Data to Answer Questions", issuer: "Google / Coursera" },
-  { img: certShareData, title: "Share Data Through Visualization", issuer: "Google / Coursera" },
-  { img: certPython, title: "Introduction to Data Analysis Using Python", issuer: "Google / Coursera" },
-  { img: certCapstone, title: "Data Analytics Capstone: Case Study", issuer: "Google / Coursera" },
-  { img: certJobSearch, title: "Accelerate Your Job Search with AI", issuer: "Google / Coursera" },
-];
+// Map seeded placeholder paths to bundled assets so the gallery renders out of the box.
+const seedMap: Record<string, string> = {
+  "/cert/cert-professional.jpg": certProfessional,
+  "/cert/cert-foundations.jpg": certFoundations,
+  "/cert/cert-ask-questions.jpg": certAskQuestions,
+  "/cert/cert-prepare-data.jpg": certPrepareData,
+  "/cert/cert-process-data.jpg": certProcessData,
+  "/cert/cert-analyze-data.jpg": certAnalyzeData,
+  "/cert/cert-share-data.jpg": certShareData,
+  "/cert/cert-python.jpg": certPython,
+  "/cert/cert-capstone.jpg": certCapstone,
+  "/cert/cert-job-search.jpg": certJobSearch,
+};
+
+const resolveImage = (url: string) => seedMap[url] ?? url;
 
 export const CertificatesMarquee = () => {
-  const looped = [...certificates, ...certificates];
+  const { items } = useCertificates();
+  if (items.length === 0) return null;
+
+  const looped = [...items, ...items];
+
   return (
     <div className="relative w-full overflow-hidden py-6">
       <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
@@ -33,22 +42,36 @@ export const CertificatesMarquee = () => {
       <motion.div
         className="flex gap-6 w-max"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: certificates.length * 5, ease: "linear", repeat: Infinity }}
+        transition={{ duration: items.length * 5, ease: "linear", repeat: Infinity }}
       >
-        {looped.map((cert, i) => (
-          <div
-            key={`${cert.title}-${i}`}
-            className="w-[300px] md:w-[360px] shrink-0 rounded-xl overflow-hidden border border-border bg-card hover:border-primary/40 transition-colors"
-          >
-            <div className="aspect-[4/3] overflow-hidden bg-muted">
-              <img src={cert.img} alt={cert.title} className="w-full h-full object-cover" loading="lazy" />
+        {looped.map((cert, i) => {
+          const card = (
+            <div className="w-[300px] md:w-[360px] shrink-0 rounded-xl overflow-hidden border border-border bg-card hover:border-primary/40 transition-colors group">
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
+                <img src={resolveImage(cert.image_url)} alt={cert.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              </div>
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="font-semibold text-sm line-clamp-1">{cert.title}</h3>
+                  {cert.link && <ExternalLink size={14} className="text-primary shrink-0 mt-0.5" />}
+                </div>
+                <p className="text-muted-foreground text-xs mb-1">{cert.issuer}</p>
+                {cert.description && (
+                  <p className="text-muted-foreground/80 text-xs line-clamp-2">{cert.description}</p>
+                )}
+              </div>
             </div>
-            <div className="p-4">
-              <h3 className="font-semibold text-sm mb-1 line-clamp-1">{cert.title}</h3>
-              <p className="text-muted-foreground text-xs">{cert.issuer}</p>
+          );
+          return (
+            <div key={`${cert.id}-${i}`} className="shrink-0">
+              {cert.link ? (
+                <a href={cert.link} target="_blank" rel="noreferrer" className="block">{card}</a>
+              ) : (
+                card
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
     </div>
   );

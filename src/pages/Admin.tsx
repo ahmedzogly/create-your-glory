@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { useSiteContent, useExperiences, useEducation, useProjects, useSkills } from "@/hooks/use-site-data";
+import { useSiteContent, useExperiences, useEducation, useProjects, useSkills, useCertificates, useOrbitSkills } from "@/hooks/use-site-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,8 @@ const Admin = () => {
   const { items: education, refetch: refetchEdu } = useEducation();
   const { items: projects, refetch: refetchProj } = useProjects();
   const { items: skills, refetch: refetchSkills } = useSkills();
+  const { items: certificates, refetch: refetchCerts } = useCertificates();
+  const { items: orbitSkills, refetch: refetchOrbit } = useOrbitSkills();
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
@@ -69,6 +71,8 @@ const Admin = () => {
             <TabsTrigger value="experiences">Experience</TabsTrigger>
             <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="skills">Skills</TabsTrigger>
+            <TabsTrigger value="certificates">Certificates</TabsTrigger>
+            <TabsTrigger value="orbit">Orbit Skills</TabsTrigger>
           </TabsList>
 
           <TabsContent value="content"><ContentEditor content={content} onSaved={refetchContent} /></TabsContent>
@@ -76,6 +80,8 @@ const Admin = () => {
           <TabsContent value="experiences"><ExperiencesEditor items={experiences} onChanged={refetchExp} /></TabsContent>
           <TabsContent value="education"><EducationEditor items={education} onChanged={refetchEdu} /></TabsContent>
           <TabsContent value="skills"><SkillsEditor items={skills} onChanged={refetchSkills} /></TabsContent>
+          <TabsContent value="certificates"><CertificatesEditor items={certificates} onChanged={refetchCerts} /></TabsContent>
+          <TabsContent value="orbit"><OrbitSkillsEditor items={orbitSkills} onChanged={refetchOrbit} /></TabsContent>
         </Tabs>
       </div>
     </div>
@@ -513,4 +519,175 @@ const SkillDialog = ({ open, onOpenChange, item, onSaved }: any) => {
   );
 };
 
+/* ---------- Certificates ---------- */
+const CertificatesEditor = ({ items, onChanged }: { items: any[]; onChanged: () => void }) => {
+  const [editing, setEditing] = useState<any | null>(null);
+  const [open, setOpen] = useState(false);
+  const remove = async (id: string) => {
+    if (!confirm("Delete?")) return;
+    const { error } = await supabase.from("certificates").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); onChanged(); }
+  };
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end"><Button onClick={() => { setEditing(null); setOpen(true); }}><Plus className="w-4 h-4 mr-2" />Add Certificate</Button></div>
+      <div className="grid md:grid-cols-2 gap-4">
+        {items.map((c) => (
+          <Card key={c.id} className="p-4">
+            <div className="flex gap-3">
+              <img src={c.image_url?.startsWith("http") ? c.image_url : ""} alt="" className="w-20 h-20 object-cover rounded bg-muted" />
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold truncate">{c.title}</h3>
+                <p className="text-xs text-primary truncate">{c.issuer}</p>
+                {c.description && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{c.description}</p>}
+              </div>
+            </div>
+            <div className="flex gap-2 mt-3">
+              <Button size="sm" variant="outline" onClick={() => { setEditing(c); setOpen(true); }}><Pencil className="w-3 h-3 mr-1" />Edit</Button>
+              <Button size="sm" variant="destructive" onClick={() => remove(c.id)}><Trash2 className="w-3 h-3" /></Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+      <CertificateDialog open={open} onOpenChange={setOpen} item={editing} onSaved={() => { setOpen(false); onChanged(); }} />
+    </div>
+  );
+};
+
+const CertificateDialog = ({ open, onOpenChange, item, onSaved }: any) => {
+  const [title, setTitle] = useState(""); const [issuer, setIssuer] = useState("");
+  const [description, setDescription] = useState(""); const [imageUrl, setImageUrl] = useState("");
+  const [link, setLink] = useState(""); const [order, setOrder] = useState(0);
+  const [saving, setSaving] = useState(false); const [uploading, setUploading] = useState(false);
+  useEffect(() => {
+    setTitle(item?.title ?? ""); setIssuer(item?.issuer ?? "");
+    setDescription(item?.description ?? ""); setImageUrl(item?.image_url ?? "");
+    setLink(item?.link ?? ""); setOrder(item?.display_order ?? 0);
+  }, [item, open]);
+  const uploadImage = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `certificates/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("site-images").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("site-images").getPublicUrl(path);
+      setImageUrl(data.publicUrl);
+      toast.success("Image uploaded");
+    } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
+  };
+  const save = async () => {
+    setSaving(true);
+    try {
+      const payload = { title, issuer, description: description || null, image_url: imageUrl, link: link || null, display_order: order };
+      const { error } = item
+        ? await supabase.from("certificates").update(payload).eq("id", item.id)
+        : await supabase.from("certificates").insert(payload);
+      if (error) throw error;
+      toast.success("Saved"); onSaved();
+    } catch (e: any) { toast.error(e.message); } finally { setSaving(false); }
+  };
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader><DialogTitle>{item ? "Edit" : "New"} Certificate</DialogTitle></DialogHeader>
+        <div className="space-y-3">
+          <div><Label>Title</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+          <div><Label>Issuer</Label><Input value={issuer} onChange={(e) => setIssuer(e.target.value)} /></div>
+          <div><Label>Description</Label><Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} /></div>
+          <div><Label>Link (optional)</Label><Input placeholder="https://..." value={link} onChange={(e) => setLink(e.target.value)} /></div>
+          <div>
+            <Label>Image</Label>
+            {imageUrl && imageUrl.startsWith("http") && <img src={imageUrl} alt="" className="w-full h-32 object-cover rounded mb-2 bg-muted" />}
+            <label className="flex items-center justify-center gap-2 border border-dashed border-border rounded-lg p-3 cursor-pointer hover:bg-muted/50">
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              <span className="text-sm">{uploading ? "Uploading..." : "Upload image"}</span>
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])} />
+            </label>
+            <Input className="mt-2" placeholder="Or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+          </div>
+          <div><Label>Order</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
+        </div>
+        <DialogFooter><Button onClick={save} disabled={saving || !title || !imageUrl}>Save</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+/* ---------- Orbit Skills (labels around profile photo) ---------- */
+const ICON_OPTIONS = ["BarChart3", "Database", "Code2", "PieChart", "Brain", "TrendingUp", "Table2", "FileSpreadsheet", "Sparkles", "LineChart", "Cpu", "Zap"];
+
+const OrbitSkillsEditor = ({ items, onChanged }: { items: any[]; onChanged: () => void }) => {
+  const [editing, setEditing] = useState<any | null>(null);
+  const [open, setOpen] = useState(false);
+  const remove = async (id: string) => {
+    if (!confirm("Delete?")) return;
+    const { error } = await supabase.from("orbit_skills").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); onChanged(); }
+  };
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">These skills orbit around your profile photo on the home page.</p>
+      <div className="flex justify-end"><Button onClick={() => { setEditing(null); setOpen(true); }}><Plus className="w-4 h-4 mr-2" />Add Skill</Button></div>
+      <div className="grid md:grid-cols-3 gap-3">
+        {items.map((s) => (
+          <Card key={s.id} className="p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: s.color }} />
+              <span className="font-semibold text-sm">{s.label}</span>
+              <span className="text-xs text-muted-foreground ml-auto">{s.icon}</span>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => { setEditing(s); setOpen(true); }}><Pencil className="w-3 h-3" /></Button>
+              <Button size="sm" variant="destructive" onClick={() => remove(s.id)}><Trash2 className="w-3 h-3" /></Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+      <OrbitSkillDialog open={open} onOpenChange={setOpen} item={editing} onSaved={() => { setOpen(false); onChanged(); }} />
+    </div>
+  );
+};
+
+const OrbitSkillDialog = ({ open, onOpenChange, item, onSaved }: any) => {
+  const [label, setLabel] = useState(""); const [icon, setIcon] = useState("Sparkles");
+  const [color, setColor] = useState("hsl(180 85% 55%)"); const [order, setOrder] = useState(0);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    setLabel(item?.label ?? ""); setIcon(item?.icon ?? "Sparkles");
+    setColor(item?.color ?? "hsl(180 85% 55%)"); setOrder(item?.display_order ?? 0);
+  }, [item, open]);
+  const save = async () => {
+    setSaving(true);
+    try {
+      const payload = { label, icon, color, display_order: order };
+      const { error } = item
+        ? await supabase.from("orbit_skills").update(payload).eq("id", item.id)
+        : await supabase.from("orbit_skills").insert(payload);
+      if (error) throw error;
+      toast.success("Saved"); onSaved();
+    } catch (e: any) { toast.error(e.message); } finally { setSaving(false); }
+  };
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader><DialogTitle>{item ? "Edit" : "New"} Orbit Skill</DialogTitle></DialogHeader>
+        <div className="space-y-3">
+          <div><Label>Label</Label><Input value={label} onChange={(e) => setLabel(e.target.value)} /></div>
+          <div>
+            <Label>Icon</Label>
+            <select className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" value={icon} onChange={(e) => setIcon(e.target.value)}>
+              {ICON_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+          <div><Label>Color (HSL or hex)</Label><Input value={color} onChange={(e) => setColor(e.target.value)} placeholder="hsl(180 85% 55%)" /></div>
+          <div><Label>Order</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
+        </div>
+        <DialogFooter><Button onClick={save} disabled={saving || !label}>Save</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default Admin;
+
