@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucid
 import { useProfileImage } from "@/hooks/use-profile-image";
 import { ImageCropper } from "@/components/ImageCropper";
 import { PromoSection } from "@/components/PromoSection";
+import { SkillsOrbit } from "@/components/SkillsOrbit";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { StatsSection } from "@/components/StatsSection";
@@ -76,19 +77,25 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto mb-8 w-36 h-36 rounded-full overflow-hidden relative group cursor-pointer animate-pulse-glow"
-          onClick={() => fileInputRef.current?.click()}
+          transition={{ duration: 0.8 }}
+          className="mb-10"
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-primary p-[2px]">
-            <div className="w-full h-full rounded-full overflow-hidden bg-background">
-              <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
+          <SkillsOrbit>
+            <div
+              className="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative group cursor-pointer animate-pulse-glow"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <div className="absolute inset-0 rounded-full bg-gradient-primary p-[3px]">
+                <div className="w-full h-full rounded-full overflow-hidden bg-background">
+                  <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
+                </div>
+              </div>
+              <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploading ? <Loader2 size={28} className="text-white animate-spin" /> : <Camera size={28} className="text-white" />}
+              </div>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             </div>
-          </div>
-          <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            {uploading ? <Loader2 size={24} className="text-white animate-spin" /> : <Camera size={24} className="text-white" />}
-          </div>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          </SkillsOrbit>
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 

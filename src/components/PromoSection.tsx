@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ProjectsMarquee } from "./ProjectsMarquee";
+import { CertificatesMarquee } from "./CertificatesMarquee";
 import type { Project } from "@/hooks/use-site-data";
 
 interface Props {
@@ -27,21 +27,23 @@ export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Pr
           <div className="section-divider" />
         </div>
         <span className="inline-block px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase mb-5">
-          ✨ Bespoke Portfolios
+          🎓 Certifications
         </span>
         <h2 className="text-4xl md:text-6xl font-bold mb-5 leading-[1.05]">
-          <span className="text-gradient-glow animate-gradient bg-gradient-primary">{title}</span>
+          <span className="text-gradient-glow animate-gradient bg-gradient-primary">Google Data Analytics</span>
         </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">{subtitle}</p>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
+          Professional Certificate — 9 courses covering SQL, Python, Tableau, R, spreadsheets, and data visualization.
+        </p>
         <Button asChild size="lg" className="rounded-full px-8 bg-gradient-primary text-primary-foreground border-0 shadow-glow hover:shadow-glow hover:opacity-95 transition-all">
           <a href={ctaLink}>{ctaText} →</a>
         </Button>
       </motion.div>
     </div>
 
-    {/* Marquee */}
-    <div className="mx-auto w-full md:w-2/3 lg:w-1/2 mask-fade">
-      <ProjectsMarquee projects={projects} />
+    {/* Certificates marquee */}
+    <div className="mx-auto w-full mask-fade">
+      <CertificatesMarquee />
     </div>
   </section>
 );
