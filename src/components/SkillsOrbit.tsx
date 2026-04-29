@@ -48,6 +48,38 @@ export const SkillsOrbit = ({ children }: Props) => {
         />
       </motion.div>
 
+      {/* Slow orbiting numbers & symbols (data-themed) */}
+      <motion.div
+        className="absolute inset-6 pointer-events-none"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 80, ease: "linear", repeat: Infinity }}
+      >
+        {["01", "Σ", "10", "π", "{ }", "∞", "0x1F", "λ", "01010", "μ", "Δ", "</>"].map((sym, i, arr) => {
+          const angle = (i / arr.length) * Math.PI * 2;
+          const r = 50;
+          const x = 50 + r * Math.cos(angle);
+          const y = 50 + r * Math.sin(angle);
+          return (
+            <motion.span
+              key={i}
+              className="absolute -translate-x-1/2 -translate-y-1/2 font-mono text-[10px] md:text-xs tracking-widest text-primary/70"
+              style={{
+                left: `${x}%`,
+                top: `${y}%`,
+                textShadow: "0 0 8px hsl(var(--primary) / 0.6)",
+              }}
+              animate={{ rotate: 360, opacity: [0.4, 1, 0.4] }}
+              transition={{
+                rotate: { duration: 80, ease: "linear", repeat: Infinity },
+                opacity: { duration: 3 + (i % 4), repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
+              }}
+            >
+              {sym}
+            </motion.span>
+          );
+        })}
+      </motion.div>
+
       {/* Profile image in center */}
       <div className="relative z-10">{children}</div>
 
