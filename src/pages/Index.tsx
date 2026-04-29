@@ -12,6 +12,7 @@ import { TypingText } from "@/components/TypingText";
 import { StatsSection } from "@/components/StatsSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { WebGLBackground } from "@/components/WebGLBackground";
+import { Chatbot } from "@/components/Chatbot";
 import {
   useSiteContent,
   useExperiences,
@@ -336,6 +337,7 @@ const Index = () => {
         <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>
       </div>
+      <Chatbot />
     </div>
   );
 };
