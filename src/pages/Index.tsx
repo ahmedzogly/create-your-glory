@@ -12,6 +12,7 @@ import { TypingText } from "@/components/TypingText";
 import { StatsSection } from "@/components/StatsSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { WebGLBackground } from "@/components/WebGLBackground";
+import { PlexusBackground } from "@/components/PlexusBackground";
 import { Chatbot } from "@/components/Chatbot";
 import {
   useSiteContent,
@@ -70,6 +71,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
       {/* Layered atmospheric backgrounds */}
       <div className="absolute inset-0 grid-pattern opacity-50" />
+      <PlexusBackground className="absolute inset-0 w-full h-full opacity-70" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
 

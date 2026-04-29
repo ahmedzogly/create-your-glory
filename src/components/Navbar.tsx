@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
+import { PaletteSwitcher } from "@/components/PaletteSwitcher";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -72,6 +73,7 @@ export const Navbar = ({ name }: { name: string }) => {
           </nav>
 
           <div className="flex items-center gap-2">
+            <PaletteSwitcher />
             <button
               onClick={toggle}
               aria-label="Toggle theme"
