@@ -106,7 +106,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 </>
               )}
-            </div>
+            </motion.div>
           </SkillsOrbit>
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
