@@ -87,7 +87,9 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           className="mb-10"
         >
           <SkillsOrbit>
-            <div
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               className={`w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative group animate-pulse-glow ${isAdmin ? "cursor-pointer" : ""}`}
               onClick={isAdmin ? () => fileInputRef.current?.click() : undefined}
             >
@@ -104,7 +106,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 </>
               )}
-            </div>
+            </motion.div>
           </SkillsOrbit>
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
