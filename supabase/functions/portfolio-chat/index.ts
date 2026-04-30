@@ -109,7 +109,7 @@ ${(certs.data ?? []).map((c: any) => `- ${c.title} — ${c.issuer}${c.link ? ` (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-5.2",
+        model: "openai/gpt-oss-120b:free",
         stream: true,
         messages: [{ role: "system", content: systemPrompt }, ...safeMessages],
       }),
