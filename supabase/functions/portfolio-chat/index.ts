@@ -90,7 +90,7 @@ ${(certs.data ?? []).map((c: any) => `- ${c.title} — ${c.issuer}${c.link ? ` (
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         stream: true,
-        messages: [{ role: "system", content: systemPrompt }, ...messages],
+        messages: [{ role: "system", content: systemPrompt }, ...safeMessages],
       }),
     });
 
