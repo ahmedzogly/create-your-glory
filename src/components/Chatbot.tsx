@@ -128,22 +128,34 @@ export const Chatbot = () => {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-primary shadow-glow flex items-center justify-center text-primary-foreground"
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center"
         aria-label="Open chat"
       >
         <AnimatePresence mode="wait">
           {open ? (
-            <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+            <motion.span
+              key="x"
+              initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+              className="w-14 h-14 rounded-full bg-gradient-primary shadow-glow flex items-center justify-center text-primary-foreground"
+            >
               <X size={22} />
             </motion.span>
           ) : (
-            <motion.span key="msg" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-              <MessageCircle size={22} />
-            </motion.span>
+            <motion.img
+              key="bot"
+              src={chatbotIcon}
+              alt="Chatbot"
+              initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
+              className="w-16 h-16 object-contain drop-shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+            />
           )}
         </AnimatePresence>
         {!open && (
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-accent border-2 border-background animate-pulse" />
+          <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-background animate-pulse" />
         )}
       </motion.button>
 
