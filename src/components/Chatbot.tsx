@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import chatbotIcon from "@/assets/chatbot-icon.png";
+import chatbotIcon from "@/assets/chatbot-icon.webp";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -147,6 +147,11 @@ export const Chatbot = () => {
               key="bot"
               src={chatbotIcon}
               alt="Chatbot"
+              width={64}
+              height={64}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
               animate={{ rotate: 0, opacity: 1, scale: 1 }}
               exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
