@@ -104,8 +104,8 @@ ${(certs.data ?? []).map((c: any) => `- ${c.title} — ${c.issuer}${c.link ? ` (
       method: "POST",
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "HTTP-Referer": referer,
-        "X-Title": `${ownerName} — Portfolio`,
+        "HTTP-Referer": referer.replace(/[^\x00-\x7F]/g, ""),
+        "X-Title": "Portfolio Chatbot",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
