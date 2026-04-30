@@ -147,35 +147,7 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
         <motion.div layout className="grid md:grid-cols-2 gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((project, i) => (
-              <motion.button
-                layout
-                key={project.id}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, scale: 0.95 }}
-                custom={i}
-                onClick={() => setSelected(project)}
-                className="group relative text-left rounded-2xl overflow-hidden glass glow-border hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="aspect-video overflow-hidden relative">
-                  <img
-                    src={resolveImage(project.image_url)}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
-                  <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 text-xs font-mono rounded-full glass-strong text-foreground">
-                      {project.category || "Other"}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5 relative">
-                  <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
-                </div>
-              </motion.button>
+              <ProjectCard key={project.id} project={project} index={i} onSelect={setSelected} />
             ))}
           </AnimatePresence>
         </motion.div>
