@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useState, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import type { Project } from "@/hooks/use-site-data";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,82 @@ const fadeUp = {
     opacity: 1, y: 0,
     transition: { delay: i * 0.08, duration: 0.5, ease: "easeOut" as const },
   }),
+};
+
+// Subtle 3D tilt + spotlight that follows the mouse on each project card
+const ProjectCard = ({
+  project,
+  index,
+  onSelect,
+}: {
+  project: Project;
+  index: number;
+  onSelect: (p: Project) => void;
+}) => {
+  const ref = useRef<HTMLButtonElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const sx = useSpring(mx, { stiffness: 150, damping: 18, mass: 0.4 });
+  const sy = useSpring(my, { stiffness: 150, damping: 18, mass: 0.4 });
+  const rotateY = useTransform(sx, [0, 1], [6, -6]);
+  const rotateX = useTransform(sy, [0, 1], [-5, 5]);
+  const spotX = useTransform(mx, (v) => `${v * 100}%`);
+  const spotY = useTransform(my, (v) => `${v * 100}%`);
+  const spotlight = useMotionTemplate`radial-gradient(360px circle at ${spotX} ${spotY}, hsl(var(--primary) / 0.18), transparent 60%)`;
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((e.clientX - rect.left) / rect.width);
+    my.set((e.clientY - rect.top) / rect.height);
+  };
+
+  const handleMouseLeave = () => {
+    mx.set(0.5);
+    my.set(0.5);
+  };
+
+  return (
+    <motion.button
+      ref={ref}
+      layout
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      exit={{ opacity: 0, scale: 0.95 }}
+      custom={index}
+      onClick={() => onSelect(project)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformPerspective: 900, transformStyle: "preserve-3d" }}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      className="group relative text-left rounded-2xl overflow-hidden glass glow-border transition-shadow duration-300 hover:shadow-glow"
+    >
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+        style={{ background: spotlight }}
+      />
+      <div className="aspect-video overflow-hidden relative" style={{ transform: "translateZ(20px)" }}>
+        <img
+          src={resolveImage(project.image_url)}
+          alt={project.title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
+        <div className="absolute top-3 left-3">
+          <span className="px-2.5 py-1 text-xs font-mono rounded-full glass-strong text-foreground">
+            {project.category || "Other"}
+          </span>
+        </div>
+      </div>
+      <div className="p-5 relative" style={{ transform: "translateZ(30px)" }}>
+        <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{project.title}</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
+      </div>
+    </motion.button>
+  );
 };
 
 const resolveImage = (url: string) => {
@@ -71,35 +147,7 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
         <motion.div layout className="grid md:grid-cols-2 gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((project, i) => (
-              <motion.button
-                layout
-                key={project.id}
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, scale: 0.95 }}
-                custom={i}
-                onClick={() => setSelected(project)}
-                className="group relative text-left rounded-2xl overflow-hidden glass glow-border hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="aspect-video overflow-hidden relative">
-                  <img
-                    src={resolveImage(project.image_url)}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
-                  <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 text-xs font-mono rounded-full glass-strong text-foreground">
-                      {project.category || "Other"}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5 relative">
-                  <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
-                </div>
-              </motion.button>
+              <ProjectCard key={project.id} project={project} index={i} onSelect={setSelected} />
             ))}
           </AnimatePresence>
         </motion.div>
