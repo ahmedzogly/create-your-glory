@@ -18,6 +18,20 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Guard against credit-abuse via oversized input
+    const MAX_MESSAGES = 20;
+    const MAX_CHARS = 2000;
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(JSON.stringify({ error: "Too many messages" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const safeMessages = messages.slice(-MAX_MESSAGES).map((m: any) => ({
+      role: m?.role === "assistant" ? "assistant" : "user",
+      content: typeof m?.content === "string" ? m.content.slice(0, MAX_CHARS) : "",
+    }));
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
