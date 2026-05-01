@@ -17,6 +17,7 @@ export const PALETTES: Palette[] = [
   { id: "sunset",  name: "Sunset",       primary: "20 95% 60%",  primaryGlow: "30 100% 70%",  accent: "340 90% 60%",  accentGlow: "350 100% 72%" },
   { id: "cyan",    name: "Cyber Cyan",   primary: "190 95% 55%", primaryGlow: "190 100% 70%", accent: "260 90% 65%",  accentGlow: "270 100% 75%" },
   { id: "rose",    name: "Rose Gold",    primary: "330 85% 62%", primaryGlow: "330 95% 72%",  accent: "40 95% 60%",   accentGlow: "45 100% 70%"  },
+  { id: "gold",    name: "Royal Gold",   primary: "43 96% 56%",  primaryGlow: "48 100% 65%",  accent: "28 90% 52%",   accentGlow: "35 95% 62%"   },
 ];
 
 const STORAGE_KEY = "portfolio-palette";
