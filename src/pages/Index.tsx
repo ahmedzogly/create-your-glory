@@ -1,18 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
 import { useAuth } from "@/hooks/use-auth";
 import { ImageCropper } from "@/components/ImageCropper";
-import { PromoSection } from "@/components/PromoSection";
-import { SkillsOrbit } from "@/components/SkillsOrbit";
-import { ContactSection } from "@/components/ContactSection";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
-import { StatsSection } from "@/components/StatsSection";
-import { ProjectsSection } from "@/components/ProjectsSection";
-import { WebGLBackground } from "@/components/WebGLBackground";
-import { PlexusBackground } from "@/components/PlexusBackground";
 import { Chatbot } from "@/components/Chatbot";
 import {
   useSiteContent,
@@ -22,6 +15,15 @@ import {
   useSkills,
 } from "@/hooks/use-site-data";
 import profileImg from "@/assets/profile.jpg";
+
+// Lazy-load heavy / below-fold components
+const WebGLBackground = lazy(() => import("@/components/WebGLBackground").then(m => ({ default: m.WebGLBackground })));
+const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
+const SkillsOrbit = lazy(() => import("@/components/SkillsOrbit").then(m => ({ default: m.SkillsOrbit })));
+const StatsSection = lazy(() => import("@/components/StatsSection").then(m => ({ default: m.StatsSection })));
+const ProjectsSection = lazy(() => import("@/components/ProjectsSection").then(m => ({ default: m.ProjectsSection })));
+const PromoSection = lazy(() => import("@/components/PromoSection").then(m => ({ default: m.PromoSection })));
+const ContactSection = lazy(() => import("@/components/ContactSection").then(m => ({ default: m.ContactSection })));
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -71,7 +73,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
       {/* Layered atmospheric backgrounds */}
       <div className="absolute inset-0 grid-pattern opacity-50" />
-      <PlexusBackground className="absolute inset-0 w-full h-full opacity-70" />
+      <Suspense fallback={null}><PlexusBackground className="absolute inset-0 w-full h-full opacity-70" /></Suspense>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
 
@@ -86,7 +88,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           transition={{ duration: 0.8 }}
           className="mb-10"
         >
-          <SkillsOrbit>
+          <Suspense fallback={<div className="w-52 h-52 md:w-64 md:h-64" />}><SkillsOrbit>
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -107,7 +109,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
                 </>
               )}
             </motion.div>
-          </SkillsOrbit>
+          </SkillsOrbit></Suspense>
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 
@@ -207,7 +209,7 @@ const ExperienceSection = ({ items }: { items: any[] }) => (
               <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-3">
                 <div className="flex items-center gap-3">
                   {exp.image_url && (
-                    <img src={exp.image_url} alt={exp.company} className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                    <img src={exp.image_url} alt={exp.company} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                   )}
                   <div>
                     <h3 className="text-xl font-semibold">{exp.title}</h3>
@@ -249,7 +251,7 @@ const EducationSection = ({ items }: { items: any[] }) => (
             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
               <div className="flex items-center gap-3">
                 {edu.image_url && (
-                  <img src={edu.image_url} alt={edu.school} className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                  <img src={edu.image_url} alt={edu.school} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                 )}
                 <div>
                   <h3 className="text-xl font-semibold">{edu.degree}</h3>
@@ -309,34 +311,40 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative">
-      <WebGLBackground />
+      <Suspense fallback={null}><WebGLBackground /></Suspense>
       <div className="relative z-10">
       <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
-      <StatsSection
-        experienceCount={experiences.length}
-        projectsCount={projects.length}
-        educationCount={education.length}
-      />
+      <Suspense fallback={null}>
+        <StatsSection
+          experienceCount={experiences.length}
+          projectsCount={projects.length}
+          educationCount={education.length}
+        />
+      </Suspense>
       <ExperienceSection items={experiences} />
       <EducationSection items={education} />
-      <ProjectsSection items={projects} />
-      <PromoSection
-        title={content.promo_title ?? "Want a Portfolio Like This?"}
-        subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
-        ctaText={content.promo_cta_text ?? "Contact Me"}
-        ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
-        projects={projects}
-      />
+      <Suspense fallback={null}><ProjectsSection items={projects} /></Suspense>
+      <Suspense fallback={null}>
+        <PromoSection
+          title={content.promo_title ?? "Want a Portfolio Like This?"}
+          subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
+          ctaText={content.promo_cta_text ?? "Contact Me"}
+          ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
+          projects={projects}
+        />
+      </Suspense>
       <SkillsSection items={skills} />
-      <ContactSection
-        email={content.contact_email}
-        phone={content.contact_phone}
-        location={content.contact_location}
-        linkedin={content.contact_linkedin}
-        github={content.contact_github}
-      />
+      <Suspense fallback={null}>
+        <ContactSection
+          email={content.contact_email}
+          phone={content.contact_phone}
+          location={content.contact_location}
+          linkedin={content.contact_linkedin}
+          github={content.contact_github}
+        />
+      </Suspense>
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
         <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
@@ -19,13 +19,78 @@ const SUGGESTIONS = [
   "كيف أتواصل معك؟",
 ];
 
+const GREETING_MESSAGES = [
+  "👋 مرحباً! أنا مساعدك الشخصي",
+  "🚀 اكتشف مهاراتي ومشاريعي!",
+  "💬 اسألني أي شيء!",
+];
+
+// Roaming waypoints (bottom-right quadrant area)
+const WAYPOINTS = [
+  { x: 0, y: 0 },       // home position (bottom-right)
+  { x: -80, y: -120 },   // up-left
+  { x: -40, y: -200 },   // higher
+  { x: 20, y: -150 },    // right
+  { x: -60, y: -80 },    // back down-left
+  { x: 0, y: 0 },        // home
+];
+
 export const Chatbot = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [greetingIdx, setGreetingIdx] = useState(0);
+  const [showGreeting, setShowGreeting] = useState(false);
+  const [roaming, setRoaming] = useState(true);
+  const [waypointIdx, setWaypointIdx] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  const roamX = useSpring(0, { stiffness: 40, damping: 15 });
+  const roamY = useSpring(0, { stiffness: 40, damping: 15 });
+
+  // Roaming animation on page load
+  useEffect(() => {
+    if (!roaming || open) return;
+    const interval = setInterval(() => {
+      setWaypointIdx((prev) => {
+        const next = (prev + 1) % WAYPOINTS.length;
+        roamX.set(WAYPOINTS[next].x);
+        roamY.set(WAYPOINTS[next].y);
+        // Stop roaming after one full cycle
+        if (next === WAYPOINTS.length - 1) {
+          setTimeout(() => setRoaming(false), 1500);
+        }
+        return next;
+      });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [roaming, open, roamX, roamY]);
+
+  // Show greeting bubbles during roaming
+  useEffect(() => {
+    if (open) { setShowGreeting(false); return; }
+    const timer = setTimeout(() => setShowGreeting(true), 2000);
+    return () => clearTimeout(timer);
+  }, [open]);
+
+  useEffect(() => {
+    if (!showGreeting || open) return;
+    if (greetingIdx >= GREETING_MESSAGES.length) return;
+    const timer = setTimeout(() => {
+      setGreetingIdx((i) => i + 1);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [showGreeting, greetingIdx, open]);
+
+  // Auto-hide greeting after last message
+  useEffect(() => {
+    if (greetingIdx >= GREETING_MESSAGES.length) {
+      const t = setTimeout(() => setShowGreeting(false), 4000);
+      return () => clearTimeout(t);
+    }
+  }, [greetingIdx]);
 
   // Load history
   useEffect(() => {
@@ -71,7 +136,6 @@ export const Chatbot = () => {
       if (res.status === 402) { toast.error("AI credits exhausted."); throw new Error("credits"); }
       if (!res.ok || !res.body) throw new Error("Network error");
 
-      // Stream SSE
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -120,15 +184,32 @@ export const Chatbot = () => {
 
   return (
     <>
+      {/* Greeting bubble */}
+      <AnimatePresence>
+        {showGreeting && !open && greetingIdx < GREETING_MESSAGES.length && (
+          <motion.div
+            key={`greeting-${greetingIdx}`}
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            className="fixed bottom-24 right-6 z-50 max-w-[220px] px-4 py-2.5 rounded-2xl rounded-br-sm glass-strong border border-primary/30 text-sm font-medium shadow-glow-sm"
+            style={{ x: roamX, y: roamY }}
+          >
+            <span className="text-gradient">{GREETING_MESSAGES[greetingIdx]}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating button */}
       <motion.button
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1, type: "spring", stiffness: 200 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { setOpen((v) => !v); setRoaming(false); setShowGreeting(false); }}
         className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center"
+        style={{ x: roamX, y: roamY }}
         aria-label="Open chat"
       >
         <AnimatePresence mode="wait">
