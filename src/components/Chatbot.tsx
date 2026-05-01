@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { MessageCircle, X, Send, Sparkles, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring, useDragControls } from "framer-motion";
+import { X, Send, Sparkles, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,20 +19,11 @@ const SUGGESTIONS = [
   "كيف أتواصل معك؟",
 ];
 
-const GREETING_MESSAGES = [
-  "👋 مرحباً! أنا مساعدك الشخصي",
-  "🚀 اكتشف مهاراتي ومشاريعي!",
-  "💬 اسألني أي شيء!",
-];
-
-// Roaming waypoints (bottom-right quadrant area)
-const WAYPOINTS = [
-  { x: 0, y: 0 },       // home position (bottom-right)
-  { x: -80, y: -120 },   // up-left
-  { x: -40, y: -200 },   // higher
-  { x: 20, y: -150 },    // right
-  { x: -60, y: -80 },    // back down-left
-  { x: 0, y: 0 },        // home
+const TOUR_MESSAGES = [
+  "👋 مرحباً بك في بورتفوليو أحمد!",
+  "🎯 هنا تجد مهاراتي وخبراتي",
+  "🚀 اكتشف مشاريعي المميزة!",
+  "💬 اضغط عليّ لتسألني أي شيء!",
 ];
 
 export const Chatbot = () => {
@@ -40,57 +31,52 @@ export const Chatbot = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [greetingIdx, setGreetingIdx] = useState(0);
-  const [showGreeting, setShowGreeting] = useState(false);
-  const [roaming, setRoaming] = useState(true);
-  const [waypointIdx, setWaypointIdx] = useState(0);
+  const [tourPhase, setTourPhase] = useState<"grow" | "travel" | "greet" | "return" | "idle">("grow");
+  const [tourMsgIdx, setTourMsgIdx] = useState(0);
+  const [showTourBubble, setShowTourBubble] = useState(false);
+  const [botScale, setBotScale] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const constraintsRef = useRef<HTMLDivElement>(null);
 
-  const roamX = useSpring(0, { stiffness: 40, damping: 15 });
-  const roamY = useSpring(0, { stiffness: 40, damping: 15 });
+  // Drag position
+  const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
 
-  // Roaming animation on page load
+  // Tour animation sequence
   useEffect(() => {
-    if (!roaming || open) return;
-    const interval = setInterval(() => {
-      setWaypointIdx((prev) => {
-        const next = (prev + 1) % WAYPOINTS.length;
-        roamX.set(WAYPOINTS[next].x);
-        roamY.set(WAYPOINTS[next].y);
-        // Stop roaming after one full cycle
-        if (next === WAYPOINTS.length - 1) {
-          setTimeout(() => setRoaming(false), 1500);
-        }
-        return next;
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [roaming, open, roamX, roamY]);
+    if (open) return;
+    // Phase 1: Grow to 2x
+    const t1 = setTimeout(() => {
+      setBotScale(2);
+      setTourPhase("travel");
+    }, 800);
 
-  // Show greeting bubbles during roaming
-  useEffect(() => {
-    if (open) { setShowGreeting(false); return; }
-    const timer = setTimeout(() => setShowGreeting(true), 2000);
-    return () => clearTimeout(timer);
-  }, [open]);
+    // Phase 2: Travel to top-left area
+    const t2 = setTimeout(() => {
+      setTourPhase("greet");
+      setShowTourBubble(true);
+    }, 2200);
 
-  useEffect(() => {
-    if (!showGreeting || open) return;
-    if (greetingIdx >= GREETING_MESSAGES.length) return;
-    const timer = setTimeout(() => {
-      setGreetingIdx((i) => i + 1);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [showGreeting, greetingIdx, open]);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
 
-  // Auto-hide greeting after last message
+  // Cycle through tour greeting messages
   useEffect(() => {
-    if (greetingIdx >= GREETING_MESSAGES.length) {
-      const t = setTimeout(() => setShowGreeting(false), 4000);
+    if (tourPhase !== "greet" || open) return;
+    if (tourMsgIdx >= TOUR_MESSAGES.length) {
+      // Done greeting, return home
+      const t = setTimeout(() => {
+        setShowTourBubble(false);
+        setTourPhase("return");
+        setBotScale(1);
+        setTimeout(() => setTourPhase("idle"), 1200);
+      }, 1000);
       return () => clearTimeout(t);
     }
-  }, [greetingIdx]);
+    const t = setTimeout(() => setTourMsgIdx((i) => i + 1), 2500);
+    return () => clearTimeout(t);
+  }, [tourPhase, tourMsgIdx, open]);
 
   // Load history
   useEffect(() => {
@@ -182,34 +168,62 @@ export const Chatbot = () => {
     localStorage.removeItem(STORAGE_KEY);
   };
 
+  // Compute tour position for the bot
+  const getTourStyle = () => {
+    if (tourPhase === "travel" || tourPhase === "greet") {
+      return { bottom: "auto", top: "120px", right: "auto", left: "80px" };
+    }
+    return {};
+  };
+
+  const isTouring = tourPhase === "travel" || tourPhase === "greet";
+
   return (
     <>
-      {/* Greeting bubble */}
+      {/* Full-screen drag constraint */}
+      <div ref={constraintsRef} className="fixed inset-0 z-40 pointer-events-none" />
+
+      {/* Tour greeting bubble */}
       <AnimatePresence>
-        {showGreeting && !open && greetingIdx < GREETING_MESSAGES.length && (
+        {showTourBubble && !open && tourMsgIdx <= TOUR_MESSAGES.length && tourMsgIdx > 0 && (
           <motion.div
-            key={`greeting-${greetingIdx}`}
+            key={`tour-${tourMsgIdx}`}
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            className="fixed bottom-24 right-6 z-50 max-w-[220px] px-4 py-2.5 rounded-2xl rounded-br-sm glass-strong border border-primary/30 text-sm font-medium shadow-glow-sm"
-            style={{ x: roamX, y: roamY }}
+            className="fixed z-50 max-w-[260px] px-4 py-3 rounded-2xl rounded-tl-sm glass-strong border border-primary/30 text-sm font-medium shadow-glow-sm"
+            style={{ top: "80px", left: "160px" }}
           >
-            <span className="text-gradient">{GREETING_MESSAGES[greetingIdx]}</span>
+            <span className="text-gradient">{TOUR_MESSAGES[tourMsgIdx - 1]}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating button */}
+      {/* Floating draggable button */}
       <motion.button
+        drag
+        dragConstraints={constraintsRef}
+        dragElastic={0.1}
+        dragMomentum={false}
+        style={{ x: dragX, y: dragY }}
         initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-        whileHover={{ scale: 1.08 }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          ...(isTouring ? { position: "fixed" as any } : {}),
+        }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+        whileHover={{ scale: isTouring ? botScale : 1.08 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => { setOpen((v) => !v); setRoaming(false); setShowGreeting(false); }}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center"
-        style={{ x: roamX, y: roamY }}
+        onClick={() => {
+          setOpen((v) => !v);
+          setTourPhase("idle");
+          setShowTourBubble(false);
+          setBotScale(1);
+        }}
+        className={`fixed z-50 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-700 ${
+          isTouring ? "top-[120px] left-[80px] bottom-auto right-auto" : "bottom-6 right-6"
+        }`}
         aria-label="Open chat"
       >
         <AnimatePresence mode="wait">
@@ -234,13 +248,18 @@ export const Chatbot = () => {
               decoding="async"
               fetchPriority="high"
               initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              animate={{
+                rotate: 0,
+                opacity: 1,
+                scale: botScale,
+              }}
               exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
+              transition={{ type: "spring", stiffness: 120, damping: 12, duration: 0.6 }}
               className="w-16 h-16 object-contain drop-shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
             />
           )}
         </AnimatePresence>
-        {!open && (
+        {!open && tourPhase === "idle" && (
           <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-background animate-pulse" />
         )}
       </motion.button>
