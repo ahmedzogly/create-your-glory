@@ -73,7 +73,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
       {/* Layered atmospheric backgrounds */}
       <div className="absolute inset-0 grid-pattern opacity-50" />
-      <PlexusBackground className="absolute inset-0 w-full h-full opacity-70" />
+      <Suspense fallback={null}><PlexusBackground className="absolute inset-0 w-full h-full opacity-70" /></Suspense>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
 
@@ -88,7 +88,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           transition={{ duration: 0.8 }}
           className="mb-10"
         >
-          <SkillsOrbit>
+          <Suspense fallback={<div className="w-52 h-52 md:w-64 md:h-64" />}><SkillsOrbit>
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
