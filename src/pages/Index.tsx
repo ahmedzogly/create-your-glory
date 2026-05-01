@@ -1,18 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
 import { useAuth } from "@/hooks/use-auth";
 import { ImageCropper } from "@/components/ImageCropper";
-import { PromoSection } from "@/components/PromoSection";
-import { SkillsOrbit } from "@/components/SkillsOrbit";
-import { ContactSection } from "@/components/ContactSection";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
-import { StatsSection } from "@/components/StatsSection";
-import { ProjectsSection } from "@/components/ProjectsSection";
-import { WebGLBackground } from "@/components/WebGLBackground";
-import { PlexusBackground } from "@/components/PlexusBackground";
 import { Chatbot } from "@/components/Chatbot";
 import {
   useSiteContent,
@@ -22,6 +15,15 @@ import {
   useSkills,
 } from "@/hooks/use-site-data";
 import profileImg from "@/assets/profile.jpg";
+
+// Lazy-load heavy / below-fold components
+const WebGLBackground = lazy(() => import("@/components/WebGLBackground").then(m => ({ default: m.WebGLBackground })));
+const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
+const SkillsOrbit = lazy(() => import("@/components/SkillsOrbit").then(m => ({ default: m.SkillsOrbit })));
+const StatsSection = lazy(() => import("@/components/StatsSection").then(m => ({ default: m.StatsSection })));
+const ProjectsSection = lazy(() => import("@/components/ProjectsSection").then(m => ({ default: m.ProjectsSection })));
+const PromoSection = lazy(() => import("@/components/PromoSection").then(m => ({ default: m.PromoSection })));
+const ContactSection = lazy(() => import("@/components/ContactSection").then(m => ({ default: m.ContactSection })));
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
