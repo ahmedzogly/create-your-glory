@@ -209,7 +209,7 @@ const ExperienceSection = ({ items }: { items: any[] }) => (
               <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-3">
                 <div className="flex items-center gap-3">
                   {exp.image_url && (
-                    <img src={exp.image_url} alt={exp.company} className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                    <img src={exp.image_url} alt={exp.company} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                   )}
                   <div>
                     <h3 className="text-xl font-semibold">{exp.title}</h3>
@@ -251,7 +251,7 @@ const EducationSection = ({ items }: { items: any[] }) => (
             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
               <div className="flex items-center gap-3">
                 {edu.image_url && (
-                  <img src={edu.image_url} alt={edu.school} className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                  <img src={edu.image_url} alt={edu.school} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                 )}
                 <div>
                   <h3 className="text-xl font-semibold">{edu.degree}</h3>
