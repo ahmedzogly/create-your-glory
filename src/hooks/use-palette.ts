@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
-export type PaletteId = "violet" | "emerald" | "sunset" | "cyan" | "rose";
+export type PaletteId = "violet" | "emerald" | "sunset" | "cyan" | "rose" | "gold";
 
 export interface Palette {
   id: PaletteId;
