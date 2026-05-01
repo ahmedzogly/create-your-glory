@@ -109,7 +109,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
                 </>
               )}
             </motion.div>
-          </SkillsOrbit>
+          </SkillsOrbit></Suspense>
         </motion.div>
         <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 
