@@ -311,34 +311,40 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative">
-      <WebGLBackground />
+      <Suspense fallback={null}><WebGLBackground /></Suspense>
       <div className="relative z-10">
       <Navbar name={content.hero_title ?? ""} />
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
-      <StatsSection
-        experienceCount={experiences.length}
-        projectsCount={projects.length}
-        educationCount={education.length}
-      />
+      <Suspense fallback={null}>
+        <StatsSection
+          experienceCount={experiences.length}
+          projectsCount={projects.length}
+          educationCount={education.length}
+        />
+      </Suspense>
       <ExperienceSection items={experiences} />
       <EducationSection items={education} />
-      <ProjectsSection items={projects} />
-      <PromoSection
-        title={content.promo_title ?? "Want a Portfolio Like This?"}
-        subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
-        ctaText={content.promo_cta_text ?? "Contact Me"}
-        ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
-        projects={projects}
-      />
+      <Suspense fallback={null}><ProjectsSection items={projects} /></Suspense>
+      <Suspense fallback={null}>
+        <PromoSection
+          title={content.promo_title ?? "Want a Portfolio Like This?"}
+          subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
+          ctaText={content.promo_cta_text ?? "Contact Me"}
+          ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
+          projects={projects}
+        />
+      </Suspense>
       <SkillsSection items={skills} />
-      <ContactSection
-        email={content.contact_email}
-        phone={content.contact_phone}
-        location={content.contact_location}
-        linkedin={content.contact_linkedin}
-        github={content.contact_github}
-      />
+      <Suspense fallback={null}>
+        <ContactSection
+          email={content.contact_email}
+          phone={content.contact_phone}
+          location={content.contact_location}
+          linkedin={content.contact_linkedin}
+          github={content.contact_github}
+        />
+      </Suspense>
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
         <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
       </footer>
