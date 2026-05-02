@@ -1,9 +1,7 @@
-import { useState, useRef, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
-import { useAuth } from "@/hooks/use-auth";
-import { ImageCropper } from "@/components/ImageCropper";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { Chatbot } from "@/components/Chatbot";
@@ -14,7 +12,7 @@ import {
   useProjects,
   useSkills,
 } from "@/hooks/use-site-data";
-import profileImg from "@/assets/profile.jpg";
+import profileImg from "@/assets/profile.webp";
 
 // Lazy-load heavy / below-fold components
 const WebGLBackground = lazy(() => import("@/components/WebGLBackground").then(m => ({ default: m.WebGLBackground })));
@@ -35,29 +33,7 @@ const fadeUp = {
 };
 
 const HeroSection = ({ content }: { content: Record<string, string> }) => {
-  const { imageUrl, uploading, upload } = useProfileImage(profileImg);
-  const { isAdmin } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [cropperOpen, setCropperOpen] = useState(false);
-  const [rawImage, setRawImage] = useState<string>("");
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setRawImage(reader.result as string);
-        setCropperOpen(true);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleCrop = (blob: Blob) => {
-    setCropperOpen(false);
-    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
-    upload(file);
-  };
+  const { imageUrl } = useProfileImage(profileImg);
 
   const fullName = content.hero_title ?? "";
   const [firstName, ...rest] = fullName.split(" ");
@@ -92,26 +68,25 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className={`w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative group animate-pulse-glow ${isAdmin ? "cursor-pointer" : ""}`}
-              onClick={isAdmin ? () => fileInputRef.current?.click() : undefined}
+              className="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative animate-pulse-glow"
             >
               <div className="absolute inset-0 rounded-full bg-gradient-primary p-[3px]">
                 <div className="w-full h-full rounded-full overflow-hidden bg-background">
-                  <img src={imageUrl} alt={fullName} className="w-full h-full object-cover object-top" />
+                  <img
+                    src={imageUrl}
+                    alt={fullName}
+                    width={256}
+                    height={256}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
               </div>
-              {isAdmin && (
-                <>
-                  <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    {uploading ? <Loader2 size={28} className="text-white animate-spin" /> : <Camera size={28} className="text-white" />}
-                  </div>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-                </>
-              )}
             </motion.div>
           </SkillsOrbit></Suspense>
         </motion.div>
-        <ImageCropper open={cropperOpen} onClose={() => setCropperOpen(false)} imageSrc={rawImage} onCrop={handleCrop} />
 
         <motion.div
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
@@ -306,7 +281,7 @@ const Index = () => {
   const { items: skills } = useSkills();
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   }
 
   return (
