@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut } from "lucide-react";
+import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut, Github } from "lucide-react";
+import { SiWhatsapp } from "react-icons/si";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { PaletteSwitcher } from "@/components/PaletteSwitcher";
@@ -73,6 +74,24 @@ export const Navbar = ({ name }: { name: string }) => {
           </nav>
 
           <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/ahmedzogly"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+              className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-foreground hover:text-primary transition-colors"
+            >
+              <Github size={18} />
+            </a>
+            <a
+              href="https://wa.me/2001097401429"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="WhatsApp"
+              className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-green-500 hover:text-green-400 transition-colors"
+            >
+              <SiWhatsapp size={18} />
+            </a>
             <PaletteSwitcher />
             <button
               onClick={toggle}
