@@ -1,9 +1,8 @@
-import { useState, useRef, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Linkedin, Camera, Loader2, ArrowDown } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
-import { useAuth } from "@/hooks/use-auth";
-import { ImageCropper } from "@/components/ImageCropper";
+import { Navbar } from "@/components/Navbar";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { Chatbot } from "@/components/Chatbot";
