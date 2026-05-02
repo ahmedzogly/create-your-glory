@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
 import { Navbar } from "@/components/Navbar";
-import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { Chatbot } from "@/components/Chatbot";
 import {
