@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, Github, Send, MessageSquare } from "lucide-react";
+import { SiWhatsapp } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,6 +132,10 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
                     <Github size={16} />
                   </a>
                 )}
+                <a href="https://wa.me/2001097401429" target="_blank" rel="noreferrer" aria-label="WhatsApp"
+                   className="w-10 h-10 rounded-full glass-strong flex items-center justify-center text-green-500 hover:text-green-400 hover:border-green-500/40 transition-colors">
+                  <SiWhatsapp size={16} />
+                </a>
               </div>
             </>
           )}
