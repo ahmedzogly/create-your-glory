@@ -3,16 +3,16 @@ import { motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCertificates, type Certificate } from "@/hooks/use-site-data";
-import certFoundations from "@/assets/certificates/cert-foundations.jpg";
-import certAskQuestions from "@/assets/certificates/cert-ask-questions.jpg";
-import certPrepareData from "@/assets/certificates/cert-prepare-data.jpg";
-import certProcessData from "@/assets/certificates/cert-process-data.jpg";
-import certAnalyzeData from "@/assets/certificates/cert-analyze-data.jpg";
-import certShareData from "@/assets/certificates/cert-share-data.jpg";
-import certPython from "@/assets/certificates/cert-python.jpg";
-import certCapstone from "@/assets/certificates/cert-capstone.jpg";
-import certJobSearch from "@/assets/certificates/cert-job-search.jpg";
-import certProfessional from "@/assets/certificates/cert-professional.jpg";
+import certFoundations from "@/assets/certificates/cert-foundations.webp";
+import certAskQuestions from "@/assets/certificates/cert-ask-questions.webp";
+import certPrepareData from "@/assets/certificates/cert-prepare-data.webp";
+import certProcessData from "@/assets/certificates/cert-process-data.webp";
+import certAnalyzeData from "@/assets/certificates/cert-analyze-data.webp";
+import certShareData from "@/assets/certificates/cert-share-data.webp";
+import certPython from "@/assets/certificates/cert-python.webp";
+import certCapstone from "@/assets/certificates/cert-capstone.webp";
+import certJobSearch from "@/assets/certificates/cert-job-search.webp";
+import certProfessional from "@/assets/certificates/cert-professional.webp";
 
 const seedMap: Record<string, string> = {
   "/cert/cert-professional.jpg": certProfessional,
