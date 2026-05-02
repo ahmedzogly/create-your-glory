@@ -12,7 +12,7 @@ import {
   useProjects,
   useSkills,
 } from "@/hooks/use-site-data";
-import profileImg from "@/assets/profile.jpg";
+import profileImg from "@/assets/profile.webp";
 
 // Lazy-load heavy / below-fold components
 const WebGLBackground = lazy(() => import("@/components/WebGLBackground").then(m => ({ default: m.WebGLBackground })));
