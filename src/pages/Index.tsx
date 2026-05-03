@@ -57,18 +57,18 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
       <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/15 blur-[140px] animate-float" style={{ animationDelay: "2s" }} />
 
-      <div className="container max-w-4xl text-center relative z-10 px-6">
+      <div className="container max-w-5xl text-center relative z-10 px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="mb-10"
+          className="mb-8"
         >
           <Suspense fallback={<div className="w-52 h-52 md:w-64 md:h-64" />}><SkillsOrbit>
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden relative animate-pulse-glow"
+              className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden relative animate-pulse-glow"
             >
               <div className="absolute inset-0 rounded-full bg-gradient-primary p-[3px]">
                 <div className="w-full h-full rounded-full overflow-hidden bg-background">
@@ -90,7 +90,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
 
         <motion.div
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-          className="mb-6 min-h-[28px] inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase"
+          className="mb-4 min-h-[28px] inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))] animate-pulse" />
           {typingWords.length > 0 ? (
@@ -102,19 +102,19 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]"
+          className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 leading-[1.05] uppercase"
         >
           {firstName} <span className="text-gradient-glow animate-gradient bg-gradient-primary">{lastName}</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
+          className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
         >
           {content.hero_tagline}
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-3 mt-10 text-sm"
+          className="flex flex-wrap items-center justify-center gap-3 mt-8 text-sm"
         >
           {content.contact_email && (
             <a href={`mailto:${content.contact_email}`} className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
