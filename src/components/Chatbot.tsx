@@ -35,6 +35,7 @@ export const Chatbot = () => {
   const [tourMsgIdx, setTourMsgIdx] = useState(0);
   const [showTourBubble, setShowTourBubble] = useState(false);
   const [botScale, setBotScale] = useState(1);
+  const [iconHovered, setIconHovered] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
