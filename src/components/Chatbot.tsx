@@ -241,15 +241,8 @@ export const Chatbot = () => {
               <X size={22} />
             </motion.span>
           ) : (
-            <motion.img
+            <motion.div
               key="bot"
-              src={chatbotIcon}
-              alt="Chatbot"
-              width={64}
-              height={64}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
               initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
               animate={{
                 rotate: 0,
@@ -258,8 +251,9 @@ export const Chatbot = () => {
               }}
               exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
               transition={{ type: "spring", stiffness: 120, damping: 12, duration: 0.6 }}
-              className="w-16 h-16 object-contain drop-shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
-            />
+            >
+              <AnimatedChatbotIcon size={64} isHovered={iconHovered} isTalking={loading} />
+            </motion.div>
           )}
         </AnimatePresence>
         {!open && tourPhase === "idle" && (
