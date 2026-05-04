@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { AnimatedChatbotIcon } from "@/components/AnimatedChatbotIcon";
+import chatbotIcon from "@/assets/chatbot-icon.webp";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -35,7 +35,6 @@ export const Chatbot = () => {
   const [tourMsgIdx, setTourMsgIdx] = useState(0);
   const [showTourBubble, setShowTourBubble] = useState(false);
   const [botScale, setBotScale] = useState(1);
-  const [iconHovered, setIconHovered] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
@@ -215,8 +214,6 @@ export const Chatbot = () => {
         }}
         transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
         whileHover={{ scale: isTouring ? botScale : 1.08 }}
-        onHoverStart={() => setIconHovered(true)}
-        onHoverEnd={() => setIconHovered(false)}
         whileTap={{ scale: 0.95 }}
         onClick={() => {
           setOpen((v) => !v);
@@ -241,8 +238,15 @@ export const Chatbot = () => {
               <X size={22} />
             </motion.span>
           ) : (
-            <motion.div
+            <motion.img
               key="bot"
+              src={chatbotIcon}
+              alt="Chatbot"
+              width={64}
+              height={64}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
               animate={{
                 rotate: 0,
@@ -251,9 +255,8 @@ export const Chatbot = () => {
               }}
               exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
               transition={{ type: "spring", stiffness: 120, damping: 12, duration: 0.6 }}
-            >
-              <AnimatedChatbotIcon size={64} isHovered={iconHovered} isTalking={loading} />
-            </motion.div>
+              className="w-16 h-16 object-contain drop-shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+            />
           )}
         </AnimatePresence>
         {!open && tourPhase === "idle" && (
