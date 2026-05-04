@@ -215,6 +215,8 @@ export const Chatbot = () => {
         }}
         transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
         whileHover={{ scale: isTouring ? botScale : 1.08 }}
+        onHoverStart={() => setIconHovered(true)}
+        onHoverEnd={() => setIconHovered(false)}
         whileTap={{ scale: 0.95 }}
         onClick={() => {
           setOpen((v) => !v);
