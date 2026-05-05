@@ -49,4 +49,5 @@ export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Pr
       <CertificatesMarquee />
     </div>
   </section>
-);
+  );
+};
