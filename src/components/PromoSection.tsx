@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CertificatesMarquee } from "./CertificatesMarquee";
 import type { Project } from "@/hooks/use-site-data";
+import { useLanguage } from "@/hooks/use-language";
 
 interface Props {
   title: string;
@@ -11,7 +12,9 @@ interface Props {
   projects: Project[];
 }
 
-export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Props) => (
+export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Props) => {
+  const { t } = useLanguage();
+  return (
   <section className="py-24 relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.15),transparent_60%)]" />
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--accent)/0.1),transparent_50%)]" />
