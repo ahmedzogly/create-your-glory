@@ -9,21 +9,22 @@ import { useLanguage } from "@/hooks/use-language";
 import { PaletteSwitcher } from "@/components/PaletteSwitcher";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { id: "summary", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "education", label: "Education" },
-  { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
-];
-
 export const Navbar = ({ name }: { name: string }) => {
   const { theme, toggle } = useTheme();
   const { user, isAdmin, signOut } = useAuth();
+  const { t, lang, toggleLang, isRtl } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  const NAV_LINKS = [
+    { id: "summary", label: t.about },
+    { id: "experience", label: t.experience },
+    { id: "education", label: t.education },
+    { id: "projects", label: t.projects },
+    { id: "skills", label: t.skills },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
