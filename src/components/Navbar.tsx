@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut, Github } from "lucide-react";
+import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut, Github, Languages } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 import { PaletteSwitcher } from "@/components/PaletteSwitcher";
 import { cn } from "@/lib/utils";
 
