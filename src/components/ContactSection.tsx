@@ -79,13 +79,13 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
           className="text-center mb-12"
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase mb-5">
-            <MessageSquare size={12} className="text-primary" /> Get in Touch
+            <MessageSquare size={12} className="text-primary" /> {t.getInTouch}
           </span>
           <h2 className="text-4xl md:text-6xl font-bold mb-4 leading-[1.05]">
-            Get in <span className="text-gradient">Touch</span>
+            {t.getInTouch} <span className="text-gradient">{t.getInTouchHighlight}</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            I'd love to hear from you or discuss opportunities
+            {t.contactSubtitle}
           </p>
         </motion.div>
 
