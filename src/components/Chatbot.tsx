@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useDragControls } from "framer-motion";
-import { X, Send, Sparkles, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Send, Sparkles, Loader2, Languages } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,25 +8,51 @@ import { toast } from "sonner";
 import chatbotIcon from "@/assets/chatbot-icon.webp";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type Lang = "ar" | "en";
 
 const STORAGE_KEY = "portfolio_chat_history_v1";
+const LANG_KEY = "portfolio_chat_lang";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
-const SUGGESTIONS = [
-  "من أنت؟",
-  "ما مهاراتك؟",
-  "أرني مشاريعك",
-  "كيف أتواصل معك؟",
-];
-
-const TOUR_MESSAGES = [
-  "👋 مرحباً بك في بورتفوليو أحمد!",
-  "🎯 هنا تجد مهاراتي وخبراتي",
-  "🚀 اكتشف مشاريعي المميزة!",
-  "💬 اضغط عليّ لتسألني أي شيء!",
-];
+const i18n = {
+  ar: {
+    suggestions: ["من أنت؟", "ما مهاراتك؟", "أرني مشاريعك", "كيف أتواصل معك؟"],
+    tourMessages: [
+      "👋 مرحباً بك في بورتفوليو أحمد!",
+      "🎯 هنا تجد مهاراتي وخبراتي",
+      "🚀 اكتشف مشاريعي المميزة!",
+      "💬 اضغط عليّ لتسألني أي شيء!",
+    ],
+    greeting: "مرحباً 👋",
+    greetingSub: "اسألني أي شيء عن الـ portfolio",
+    placeholder: "اكتب رسالتك...",
+    online: "متصل",
+    clear: "مسح",
+    tooMany: "الكثير من الطلبات. حاول لاحقاً.",
+    error: "حدث خطأ. حاول مجدداً.",
+  },
+  en: {
+    suggestions: ["Who are you?", "What are your skills?", "Show me projects", "How to contact you?"],
+    tourMessages: [
+      "👋 Welcome to Ahmed's Portfolio!",
+      "🎯 Discover my skills & experience",
+      "🚀 Check out my projects!",
+      "💬 Click me to ask anything!",
+    ],
+    greeting: "Hello 👋",
+    greetingSub: "Ask me anything about the portfolio",
+    placeholder: "Type your message...",
+    online: "Online",
+    clear: "Clear",
+    tooMany: "Too many requests. Try again later.",
+    error: "An error occurred. Please try again.",
+  },
+};
 
 export const Chatbot = () => {
+  const [lang, setLang] = useState<Lang>(() => {
+    try { return (localStorage.getItem(LANG_KEY) as Lang) || "ar"; } catch { return "ar"; }
+  });
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -39,43 +65,41 @@ export const Chatbot = () => {
   const abortRef = useRef<AbortController | null>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
 
-  // Drag position
-  const dragX = useMotionValue(0);
-  const dragY = useMotionValue(0);
+  const t = i18n[lang];
+  const isRtl = lang === "ar";
+
+  const toggleLang = () => {
+    const next: Lang = lang === "ar" ? "en" : "ar";
+    setLang(next);
+    localStorage.setItem(LANG_KEY, next);
+    // Clear chat on language change so greeting updates
+    setMessages([]);
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   // Tour animation sequence
   useEffect(() => {
     if (open) return;
-    // Phase 1: Grow to 2x
-    const t1 = setTimeout(() => {
-      setBotScale(2);
-      setTourPhase("travel");
-    }, 800);
-
-    // Phase 2: Travel to top-left area
-    const t2 = setTimeout(() => {
-      setTourPhase("greet");
-      setShowTourBubble(true);
-    }, 2200);
-
+    const t1 = setTimeout(() => { setBotScale(2); setTourPhase("travel"); }, 800);
+    const t2 = setTimeout(() => { setTourPhase("greet"); setShowTourBubble(true); }, 2200);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   // Cycle through tour greeting messages
   useEffect(() => {
     if (tourPhase !== "greet" || open) return;
-    if (tourMsgIdx >= TOUR_MESSAGES.length) {
-      // Done greeting, return home
-      const t = setTimeout(() => {
+    const tourMessages = t.tourMessages;
+    if (tourMsgIdx >= tourMessages.length) {
+      const tm = setTimeout(() => {
         setShowTourBubble(false);
         setTourPhase("return");
         setBotScale(1);
         setTimeout(() => setTourPhase("idle"), 1200);
       }, 1000);
-      return () => clearTimeout(t);
+      return () => clearTimeout(tm);
     }
-    const t = setTimeout(() => setTourMsgIdx((i) => i + 1), 2500);
-    return () => clearTimeout(t);
+    const tm = setTimeout(() => setTourMsgIdx((i) => i + 1), 2500);
+    return () => clearTimeout(tm);
   }, [tourPhase, tourMsgIdx, open]);
 
   // Load history
@@ -88,9 +112,7 @@ export const Chatbot = () => {
 
   // Persist
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-20)));
-    } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-20))); } catch {}
   }, [messages]);
 
   // Autoscroll
@@ -118,7 +140,7 @@ export const Chatbot = () => {
         signal: ctrl.signal,
       });
 
-      if (res.status === 429) { toast.error("الكثير من الطلبات. حاول لاحقاً."); throw new Error("rate"); }
+      if (res.status === 429) { toast.error(t.tooMany); throw new Error("rate"); }
       if (res.status === 402) { toast.error("AI credits exhausted."); throw new Error("credits"); }
       if (!res.ok || !res.body) throw new Error("Network error");
 
@@ -135,9 +157,9 @@ export const Chatbot = () => {
         const lines = buffer.split("\n");
         buffer = lines.pop() ?? "";
         for (const line of lines) {
-          const t = line.trim();
-          if (!t.startsWith("data:")) continue;
-          const data = t.slice(5).trim();
+          const lt = line.trim();
+          if (!lt.startsWith("data:")) continue;
+          const data = lt.slice(5).trim();
           if (data === "[DONE]") continue;
           try {
             const json = JSON.parse(data);
@@ -155,7 +177,7 @@ export const Chatbot = () => {
       }
     } catch (e: any) {
       if (e.name !== "AbortError" && !["rate", "credits"].includes(e.message)) {
-        toast.error("حدث خطأ. حاول مجدداً.");
+        toast.error(t.error);
       }
       setMessages((m) => (m[m.length - 1]?.content === "" ? m.slice(0, -1) : m));
     } finally {
@@ -168,24 +190,15 @@ export const Chatbot = () => {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Compute tour position for the bot
-  const getTourStyle = () => {
-    if (tourPhase === "travel" || tourPhase === "greet") {
-      return { bottom: "auto", top: "120px", right: "auto", left: "80px" };
-    }
-    return {};
-  };
-
   const isTouring = tourPhase === "travel" || tourPhase === "greet";
 
   return (
     <>
-      {/* Full-screen drag constraint */}
       <div ref={constraintsRef} className="fixed inset-0 z-40 pointer-events-none" />
 
       {/* Tour greeting bubble */}
       <AnimatePresence>
-        {showTourBubble && !open && tourMsgIdx <= TOUR_MESSAGES.length && tourMsgIdx > 0 && (
+        {showTourBubble && !open && tourMsgIdx <= t.tourMessages.length && tourMsgIdx > 0 && (
           <motion.div
             key={`tour-${tourMsgIdx}`}
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -194,7 +207,7 @@ export const Chatbot = () => {
             className="fixed z-50 max-w-[260px] px-4 py-3 rounded-2xl rounded-tl-sm glass-strong border border-primary/30 text-sm font-medium shadow-glow-sm"
             style={{ top: "80px", left: "160px" }}
           >
-            <span className="text-gradient">{TOUR_MESSAGES[tourMsgIdx - 1]}</span>
+            <span className="text-gradient">{t.tourMessages[tourMsgIdx - 1]}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -205,13 +218,8 @@ export const Chatbot = () => {
         dragConstraints={constraintsRef}
         dragElastic={0.1}
         dragMomentum={false}
-        style={{ x: dragX, y: dragY }}
         initial={{ scale: 0, opacity: 0 }}
-        animate={{
-          scale: 1,
-          opacity: 1,
-          ...(isTouring ? { position: "fixed" as any } : {}),
-        }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
         whileHover={{ scale: isTouring ? botScale : 1.08 }}
         whileTap={{ scale: 0.95 }}
@@ -248,11 +256,7 @@ export const Chatbot = () => {
               decoding="async"
               fetchPriority="high"
               initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-              animate={{
-                rotate: 0,
-                opacity: 1,
-                scale: botScale,
-              }}
+              animate={{ rotate: 0, opacity: 1, scale: botScale }}
               exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
               transition={{ type: "spring", stiffness: 120, damping: 12, duration: 0.6 }}
               className="w-16 h-16 object-contain drop-shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
@@ -272,6 +276,7 @@ export const Chatbot = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
+            dir={isRtl ? "rtl" : "ltr"}
             className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[400px] h-[560px] max-h-[calc(100vh-8rem)] rounded-2xl glass-strong border border-border/60 shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
@@ -281,14 +286,24 @@ export const Chatbot = () => {
                 <div>
                   <p className="text-sm font-semibold">Portfolio Assistant</p>
                   <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Online
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> {t.online}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {/* Language toggle */}
+                <button
+                  onClick={toggleLang}
+                  className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-foreground/10 transition"
+                  aria-label="Toggle language"
+                  title={lang === "ar" ? "Switch to English" : "التبديل للعربية"}
+                >
+                  <Languages size={14} />
+                  <span>{lang === "ar" ? "EN" : "عربي"}</span>
+                </button>
                 {messages.length > 0 && (
                   <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground transition">
-                    Clear
+                    {t.clear}
                   </button>
                 )}
                 <button
@@ -308,14 +323,14 @@ export const Chatbot = () => {
                   <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-primary/20 flex items-center justify-center">
                     <Sparkles className="text-primary" size={22} />
                   </div>
-                  <p className="text-sm font-semibold mb-1">مرحباً 👋</p>
-                  <p className="text-xs text-muted-foreground mb-4">اسألني أي شيء عن الـ portfolio</p>
+                  <p className="text-sm font-semibold mb-1">{t.greeting}</p>
+                  <p className="text-xs text-muted-foreground mb-4">{t.greetingSub}</p>
                   <div className="grid gap-2">
-                    {SUGGESTIONS.map((s) => (
+                    {t.suggestions.map((s) => (
                       <button
                         key={s}
                         onClick={() => send(s)}
-                        className="text-xs text-right px-3 py-2 rounded-lg glass hover:border-primary/40 hover:text-primary transition border border-border/50"
+                        className={`text-xs px-3 py-2 rounded-lg glass hover:border-primary/40 hover:text-primary transition border border-border/50 ${isRtl ? "text-right" : "text-left"}`}
                       >
                         {s}
                       </button>
@@ -368,7 +383,7 @@ export const Chatbot = () => {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="اكتب رسالتك..."
+                placeholder={t.placeholder}
                 disabled={loading}
                 className="flex-1 bg-background/50"
               />
