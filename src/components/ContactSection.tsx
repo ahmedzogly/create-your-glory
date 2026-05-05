@@ -120,7 +120,7 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
           {(linkedin || github) && (
             <>
               <div className="h-px bg-border/60 my-6" />
-              <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground mb-3">Follow</p>
+              <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground mb-3">{t.follow}</p>
               <div className="flex gap-3">
                 {linkedin && (
                   <a href={linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"
