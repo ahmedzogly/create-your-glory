@@ -28,6 +28,7 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
   const [name, setName] = useState("");
   const [fromEmail, setFromEmail] = useState("");
   const [message, setMessage] = useState("");
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
