@@ -43,9 +43,9 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
   };
 
   const infoRows = [
-    email && { icon: Mail, label: "Email", value: email, href: `mailto:${email}` },
-    phone && { icon: Phone, label: "Phone", value: phone, href: `tel:${phone.replace(/\s/g, "")}` },
-    location && { icon: MapPin, label: "Location", value: location },
+    email && { icon: Mail, label: t.email, value: email, href: `mailto:${email}` },
+    phone && { icon: Phone, label: t.phone, value: phone, href: `tel:${phone.replace(/\s/g, "")}` },
+    location && { icon: MapPin, label: t.location, value: location },
   ].filter(Boolean) as { icon: any; label: string; value: string; href?: string }[];
 
   return (
