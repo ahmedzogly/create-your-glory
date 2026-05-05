@@ -96,6 +96,13 @@ export const Navbar = ({ name }: { name: string }) => {
             </a>
             <PaletteSwitcher />
             <button
+              onClick={toggleLang}
+              aria-label="Toggle language"
+              className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-foreground transition-colors text-xs font-bold"
+            >
+              {lang === "en" ? "عر" : "EN"}
+            </button>
+            <button
               onClick={toggle}
               aria-label="Toggle theme"
               className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-foreground transition-colors"
