@@ -154,20 +154,20 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
         >
           <div className="grid md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="c-name">Name</Label>
-              <Input id="c-name" placeholder="Your full name" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
+              <Label htmlFor="c-name">{t.name}</Label>
+              <Input id="c-name" placeholder={t.namePlaceholder} value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="c-email">Email</Label>
-              <Input id="c-email" type="email" placeholder="your@email.com" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} maxLength={255} />
+              <Label htmlFor="c-email">{t.emailLabel}</Label>
+              <Input id="c-email" type="email" placeholder={t.emailPlaceholder} value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} maxLength={255} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="c-msg">Message</Label>
-            <Textarea id="c-msg" rows={6} placeholder="Write your message here..." value={message} onChange={(e) => setMessage(e.target.value)} maxLength={1000} />
+            <Label htmlFor="c-msg">{t.messageLabel}</Label>
+            <Textarea id="c-msg" rows={6} placeholder={t.messagePlaceholder} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={1000} />
           </div>
           <Button type="submit" size="lg" className="w-full rounded-xl bg-gradient-primary text-primary-foreground border-0 shadow-glow hover:opacity-95">
-            <Send size={16} className="mr-2" /> Send Message
+            <Send size={16} className="mr-2" /> {t.sendMessage}
           </Button>
         </motion.form>
       </div>
