@@ -277,9 +277,7 @@ export const Chatbot = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-gradient-to-r from-primary/10 to-accent/10">
               <div className="flex items-center gap-2">
-                <span className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground">
-                  <Sparkles size={16} />
-                </span>
+                <img src={chatbotIcon} alt="Bot" className="w-9 h-9 rounded-full object-contain" />
                 <div>
                   <p className="text-sm font-semibold">Portfolio Assistant</p>
                   <p className="text-[10px] text-muted-foreground flex items-center gap-1">
