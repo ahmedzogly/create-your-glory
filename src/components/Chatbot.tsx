@@ -287,11 +287,20 @@ export const Chatbot = () => {
                   </p>
                 </div>
               </div>
-              {messages.length > 0 && (
-                <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground transition">
-                  Clear
+              <div className="flex items-center gap-2">
+                {messages.length > 0 && (
+                  <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground transition">
+                    Clear
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition"
+                  aria-label="Close chat"
+                >
+                  <X size={16} />
                 </button>
-              )}
+              </div>
             </div>
 
             {/* Messages */}
