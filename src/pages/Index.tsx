@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
+import { useLanguage } from "@/hooks/use-language";
 import { Navbar } from "@/components/Navbar";
 import { TypingText } from "@/components/TypingText";
 import { Chatbot } from "@/components/Chatbot";
@@ -14,7 +15,6 @@ import {
 } from "@/hooks/use-site-data";
 import profileImg from "@/assets/profile.webp";
 
-// Lazy-load heavy / below-fold components
 const WebGLBackground = lazy(() => import("@/components/WebGLBackground").then(m => ({ default: m.WebGLBackground })));
 const PlexusBackground = lazy(() => import("@/components/PlexusBackground").then(m => ({ default: m.PlexusBackground })));
 const SkillsOrbit = lazy(() => import("@/components/SkillsOrbit").then(m => ({ default: m.SkillsOrbit })));
@@ -47,13 +47,11 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
-      {/* Layered atmospheric backgrounds */}
       <div className="absolute inset-0 grid-pattern opacity-50" />
       <Suspense fallback={null}><PlexusBackground className="absolute inset-0 w-full h-full opacity-70" /></Suspense>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,hsl(var(--accent)/0.14),transparent_55%)]" />
 
-      {/* Floating orbs */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/15 blur-[140px] animate-float" style={{ animationDelay: "2s" }} />
 
@@ -145,133 +143,145 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
   );
 };
 
-const SummarySection = ({ summary }: { summary: string }) => (
-  <section id="summary" className="py-24 px-6 scroll-mt-20 relative">
-    <div className="container max-w-3xl">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-        <div className="section-divider mb-6" />
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">About <span className="text-gradient">Me</span></h2>
-      </motion.div>
-      <motion.div
-        variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-        className="relative p-8 md:p-10 rounded-2xl glass"
-      >
-        <p className="text-muted-foreground leading-relaxed text-lg">{summary}</p>
-      </motion.div>
-    </div>
-  </section>
-);
+const SummarySection = ({ summary }: { summary: string }) => {
+  const { t } = useLanguage();
+  return (
+    <section id="summary" className="py-24 px-6 scroll-mt-20 relative">
+      <div className="container max-w-3xl">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
+          <div className="section-divider mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.aboutMe} <span className="text-gradient">{t.aboutMeHighlight}</span></h2>
+        </motion.div>
+        <motion.div
+          variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+          className="relative p-8 md:p-10 rounded-2xl glass"
+        >
+          <p className="text-muted-foreground leading-relaxed text-lg">{summary}</p>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
-const ExperienceSection = ({ items }: { items: any[] }) => (
-  <section id="experience" className="py-24 px-6 scroll-mt-20 relative">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_60%)]" />
-    <div className="container max-w-3xl relative">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-        <div className="section-divider mb-6" />
-        <h2 className="text-3xl md:text-4xl font-bold mb-10">Work <span className="text-gradient">Experience</span></h2>
-      </motion.div>
-      <div className="relative space-y-6 before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-primary/60 before:via-accent/40 before:to-transparent">
-        {items.map((exp, idx) => (
-          <motion.div
-            key={exp.id}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
-            className="relative pl-10 md:pl-14"
-          >
-            <span className="absolute left-0 md:left-1 top-6 w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-primary shadow-glow-sm flex items-center justify-center">
-              <span className="w-2 h-2 rounded-full bg-background" />
-            </span>
-            <div className="rounded-2xl glass p-6 hover:-translate-y-0.5 transition-transform">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-3">
+const ExperienceSection = ({ items }: { items: any[] }) => {
+  const { t } = useLanguage();
+  return (
+    <section id="experience" className="py-24 px-6 scroll-mt-20 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_60%)]" />
+      <div className="container max-w-3xl relative">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
+          <div className="section-divider mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-10">{t.workExperience} <span className="text-gradient">{t.workExperienceHighlight}</span></h2>
+        </motion.div>
+        <div className="relative space-y-6 before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-primary/60 before:via-accent/40 before:to-transparent">
+          {items.map((exp, idx) => (
+            <motion.div
+              key={exp.id}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+              className="relative pl-10 md:pl-14"
+            >
+              <span className="absolute left-0 md:left-1 top-6 w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-primary shadow-glow-sm flex items-center justify-center">
+                <span className="w-2 h-2 rounded-full bg-background" />
+              </span>
+              <div className="rounded-2xl glass p-6 hover:-translate-y-0.5 transition-transform">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3 gap-3">
+                  <div className="flex items-center gap-3">
+                    {exp.image_url && (
+                      <img src={exp.image_url} alt={exp.company} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                    )}
+                    <div>
+                      <h3 className="text-xl font-semibold">{exp.title}</h3>
+                      <p className="text-gradient text-sm font-medium">{exp.company}</p>
+                    </div>
+                  </div>
+                  <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{exp.period}</span>
+                </div>
+                <ul className="space-y-2 text-muted-foreground text-sm">
+                  {exp.bullets.map((item: string, i: number) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary))]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const EducationSection = ({ items }: { items: any[] }) => {
+  const { t } = useLanguage();
+  return (
+    <section id="education" className="py-24 px-6 scroll-mt-20">
+      <div className="container max-w-3xl">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
+          <div className="section-divider mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">{t.educationTitle}</span></h2>
+        </motion.div>
+        <div className="grid gap-5">
+          {items.map((edu, idx) => (
+            <motion.div
+              key={edu.id}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
+              className="rounded-2xl glass glow-border p-6 hover:-translate-y-0.5 transition-transform"
+            >
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
                 <div className="flex items-center gap-3">
-                  {exp.image_url && (
-                    <img src={exp.image_url} alt={exp.company} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
+                  {edu.image_url && (
+                    <img src={edu.image_url} alt={edu.school} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                   )}
                   <div>
-                    <h3 className="text-xl font-semibold">{exp.title}</h3>
-                    <p className="text-gradient text-sm font-medium">{exp.company}</p>
+                    <h3 className="text-xl font-semibold">{edu.degree}</h3>
+                    <p className="text-gradient text-sm font-medium">{edu.school}</p>
                   </div>
                 </div>
-                <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{exp.period}</span>
+                <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{edu.period}</span>
               </div>
-              <ul className="space-y-2 text-muted-foreground text-sm">
-                {exp.bullets.map((item: string, i: number) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary))]" />
-                    <span>{item}</span>
-                  </li>
+              {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const SkillsSection = ({ items }: { items: any[] }) => {
+  const { t } = useLanguage();
+  return (
+    <section id="skills" className="py-24 px-6 scroll-mt-20 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,hsl(var(--accent)/0.06),transparent_60%)]" />
+      <div className="container max-w-3xl relative">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
+          <div className="section-divider mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">{t.skillsTitle}</span> {t.skillsSuffix}</h2>
+        </motion.div>
+        <div className="grid md:grid-cols-2 gap-5">
+          {items.map((group, i) => (
+            <motion.div
+              key={group.id}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
+              className="rounded-2xl glass p-6"
+            >
+              <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{group.category}</h3>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((skill: string) => (
+                  <span key={skill} className="px-3 py-1.5 rounded-lg glass-strong text-foreground text-sm hover:text-gradient transition-colors">
+                    {skill}
+                  </span>
                 ))}
-              </ul>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const EducationSection = ({ items }: { items: any[] }) => (
-  <section id="education" className="py-24 px-6 scroll-mt-20">
-    <div className="container max-w-3xl">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-        <div className="section-divider mb-6" />
-        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Education</span></h2>
-      </motion.div>
-      <div className="grid gap-5">
-        {items.map((edu, idx) => (
-          <motion.div
-            key={edu.id}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={idx + 1}
-            className="rounded-2xl glass glow-border p-6 hover:-translate-y-0.5 transition-transform"
-          >
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
-              <div className="flex items-center gap-3">
-                {edu.image_url && (
-                  <img src={edu.image_url} alt={edu.school} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
-                )}
-                <div>
-                  <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                  <p className="text-gradient text-sm font-medium">{edu.school}</p>
-                </div>
               </div>
-              <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{edu.period}</span>
-            </div>
-            {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
-
-const SkillsSection = ({ items }: { items: any[] }) => (
-  <section id="skills" className="py-24 px-6 scroll-mt-20 relative">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,hsl(var(--accent)/0.06),transparent_60%)]" />
-    <div className="container max-w-3xl relative">
-      <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-        <div className="section-divider mb-6" />
-        <h2 className="text-3xl md:text-4xl font-bold mb-10"><span className="text-gradient">Skills</span> & Stack</h2>
-      </motion.div>
-      <div className="grid md:grid-cols-2 gap-5">
-        {items.map((group, i) => (
-          <motion.div
-            key={group.id}
-            variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-            className="rounded-2xl glass p-6"
-          >
-            <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{group.category}</h3>
-            <div className="flex flex-wrap gap-2">
-              {group.items.map((skill: string) => (
-                <span key={skill} className="px-3 py-1.5 rounded-lg glass-strong text-foreground text-sm hover:text-gradient transition-colors">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const Index = () => {
   const { content, loading } = useSiteContent();
@@ -279,13 +289,14 @@ const Index = () => {
   const { items: education } = useEducation();
   const { items: projects } = useProjects();
   const { items: skills } = useSkills();
+  const { t, isRtl } = useLanguage();
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   }
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative" dir={isRtl ? "rtl" : "ltr"}>
       <Suspense fallback={null}><WebGLBackground /></Suspense>
       <div className="relative z-10">
       <Navbar name={content.hero_title ?? ""} />
@@ -321,7 +332,7 @@ const Index = () => {
         />
       </Suspense>
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
-        <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — Crafted with precision.</p>
+        <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — {t.footerText}</p>
       </footer>
       </div>
       <Chatbot />
