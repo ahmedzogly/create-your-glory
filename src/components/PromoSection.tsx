@@ -30,7 +30,7 @@ export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Pr
           <div className="section-divider" />
         </div>
         <span className="inline-block px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase mb-5">
-          🎓 Certifications
+          🎓 {t.certifications}
         </span>
         <h2 className="text-4xl md:text-6xl font-bold mb-5 leading-[1.05]">
           <span className="text-gradient-glow animate-gradient bg-gradient-primary">Google Data Analytics</span>
