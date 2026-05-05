@@ -194,7 +194,7 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
                   >
-                    View Project <ExternalLink size={16} />
+                    {t.viewProject} <ExternalLink size={16} />
                   </a>
                 )}
               </div>
