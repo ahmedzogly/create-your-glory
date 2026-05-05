@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CertificatesMarquee } from "./CertificatesMarquee";
 import type { Project } from "@/hooks/use-site-data";
+import { useLanguage } from "@/hooks/use-language";
 
 interface Props {
   title: string;
@@ -11,7 +12,9 @@ interface Props {
   projects: Project[];
 }
 
-export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Props) => (
+export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Props) => {
+  const { t } = useLanguage();
+  return (
   <section className="py-24 relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.15),transparent_60%)]" />
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--accent)/0.1),transparent_50%)]" />
@@ -27,7 +30,7 @@ export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Pr
           <div className="section-divider" />
         </div>
         <span className="inline-block px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase mb-5">
-          🎓 Certifications
+          🎓 {t.certifications}
         </span>
         <h2 className="text-4xl md:text-6xl font-bold mb-5 leading-[1.05]">
           <span className="text-gradient-glow animate-gradient bg-gradient-primary">Google Data Analytics</span>
@@ -46,4 +49,5 @@ export const PromoSection = ({ title, subtitle, ctaText, ctaLink, projects }: Pr
       <CertificatesMarquee />
     </div>
   </section>
-);
+  );
+};

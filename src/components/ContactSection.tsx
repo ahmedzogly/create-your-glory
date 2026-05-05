@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useLanguage } from "@/hooks/use-language";
 
 interface Props {
   email?: string;
@@ -27,6 +28,7 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
   const [name, setName] = useState("");
   const [fromEmail, setFromEmail] = useState("");
   const [message, setMessage] = useState("");
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,9 +43,9 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
   };
 
   const infoRows = [
-    email && { icon: Mail, label: "Email", value: email, href: `mailto:${email}` },
-    phone && { icon: Phone, label: "Phone", value: phone, href: `tel:${phone.replace(/\s/g, "")}` },
-    location && { icon: MapPin, label: "Location", value: location },
+    email && { icon: Mail, label: t.email, value: email, href: `mailto:${email}` },
+    phone && { icon: Phone, label: t.phone, value: phone, href: `tel:${phone.replace(/\s/g, "")}` },
+    location && { icon: MapPin, label: t.location, value: location },
   ].filter(Boolean) as { icon: any; label: string; value: string; href?: string }[];
 
   return (
@@ -77,13 +79,13 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
           className="text-center mb-12"
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-mono tracking-widest uppercase mb-5">
-            <MessageSquare size={12} className="text-primary" /> Get in Touch
+            <MessageSquare size={12} className="text-primary" /> {t.getInTouch}
           </span>
           <h2 className="text-4xl md:text-6xl font-bold mb-4 leading-[1.05]">
-            Get in <span className="text-gradient">Touch</span>
+            {t.getInTouch} <span className="text-gradient">{t.getInTouchHighlight}</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            I'd love to hear from you or discuss opportunities
+            {t.contactSubtitle}
           </p>
         </motion.div>
 
@@ -118,7 +120,7 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
           {(linkedin || github) && (
             <>
               <div className="h-px bg-border/60 my-6" />
-              <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground mb-3">Follow</p>
+              <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground mb-3">{t.follow}</p>
               <div className="flex gap-3">
                 {linkedin && (
                   <a href={linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"
@@ -152,20 +154,20 @@ export const ContactSection = ({ email, phone, location, linkedin, github }: Pro
         >
           <div className="grid md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="c-name">Name</Label>
-              <Input id="c-name" placeholder="Your full name" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
+              <Label htmlFor="c-name">{t.name}</Label>
+              <Input id="c-name" placeholder={t.namePlaceholder} value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="c-email">Email</Label>
-              <Input id="c-email" type="email" placeholder="your@email.com" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} maxLength={255} />
+              <Label htmlFor="c-email">{t.emailLabel}</Label>
+              <Input id="c-email" type="email" placeholder={t.emailPlaceholder} value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} maxLength={255} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="c-msg">Message</Label>
-            <Textarea id="c-msg" rows={6} placeholder="Write your message here..." value={message} onChange={(e) => setMessage(e.target.value)} maxLength={1000} />
+            <Label htmlFor="c-msg">{t.messageLabel}</Label>
+            <Textarea id="c-msg" rows={6} placeholder={t.messagePlaceholder} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={1000} />
           </div>
           <Button type="submit" size="lg" className="w-full rounded-xl bg-gradient-primary text-primary-foreground border-0 shadow-glow hover:opacity-95">
-            <Send size={16} className="mr-2" /> Send Message
+            <Send size={16} className="mr-2" /> {t.sendMessage}
           </Button>
         </motion.form>
       </div>

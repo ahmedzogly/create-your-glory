@@ -1,28 +1,30 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut, Github } from "lucide-react";
+import { Moon, Sun, Menu, X, LogIn, LayoutDashboard, LogOut, Github, Languages } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 import { PaletteSwitcher } from "@/components/PaletteSwitcher";
 import { cn } from "@/lib/utils";
-
-const NAV_LINKS = [
-  { id: "summary", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "education", label: "Education" },
-  { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
-];
 
 export const Navbar = ({ name }: { name: string }) => {
   const { theme, toggle } = useTheme();
   const { user, isAdmin, signOut } = useAuth();
+  const { t, lang, toggleLang, isRtl } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  const NAV_LINKS = [
+    { id: "summary", label: t.about },
+    { id: "experience", label: t.experience },
+    { id: "education", label: t.education },
+    { id: "projects", label: t.projects },
+    { id: "skills", label: t.skills },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -93,6 +95,13 @@ export const Navbar = ({ name }: { name: string }) => {
               <SiWhatsapp size={18} />
             </a>
             <PaletteSwitcher />
+            <button
+              onClick={toggleLang}
+              aria-label="Toggle language"
+              className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary/60 text-foreground transition-colors text-xs font-bold"
+            >
+              {lang === "en" ? "عر" : "EN"}
+            </button>
             <button
               onClick={toggle}
               aria-label="Toggle theme"

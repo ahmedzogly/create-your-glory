@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Briefcase, FolderKanban, GraduationCap, Award } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 const Counter = ({ to, duration = 1600 }: { to: number; duration?: number }) => {
   const [val, setVal] = useState(0);
@@ -31,11 +32,12 @@ interface Props {
 }
 
 export const StatsSection = ({ experienceCount, projectsCount, educationCount }: Props) => {
+  const { t } = useLanguage();
   const stats = [
-    { icon: Briefcase, value: experienceCount, label: "Work Experiences", suffix: "+" },
-    { icon: FolderKanban, value: projectsCount, label: "Projects Delivered", suffix: "+" },
-    { icon: GraduationCap, value: educationCount, label: "Qualifications", suffix: "" },
-    { icon: Award, value: 100, label: "Commitment", suffix: "%" },
+    { icon: Briefcase, value: experienceCount, label: t.workExperiences, suffix: "+" },
+    { icon: FolderKanban, value: projectsCount, label: t.projectsDelivered, suffix: "+" },
+    { icon: GraduationCap, value: educationCount, label: t.qualifications, suffix: "" },
+    { icon: Award, value: 100, label: t.commitment, suffix: "%" },
   ];
 
   return (

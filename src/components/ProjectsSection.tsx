@@ -4,6 +4,7 @@ import { ExternalLink, X } from "lucide-react";
 import type { Project } from "@/hooks/use-site-data";
 import { cn } from "@/lib/utils";
 import { LiquidSphere } from "@/components/LiquidSphere";
+import { useLanguage } from "@/hooks/use-language";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -102,17 +103,17 @@ const resolveImage = (url: string) => {
 export const ProjectsSection = ({ items }: { items: Project[] }) => {
   const [active, setActive] = useState<string>("All");
   const [selected, setSelected] = useState<Project | null>(null);
+  const { t } = useLanguage();
 
   const categories = useMemo(() => {
     const set = new Set<string>(items.map((p) => p.category || "Other"));
-    return ["All", ...Array.from(set)];
-  }, [items]);
+    return [t.all, ...Array.from(set)];
+  }, [items, t.all]);
 
-  const filtered = active === "All" ? items : items.filter((p) => (p.category || "Other") === active);
+  const filtered = active === t.all ? items : items.filter((p) => (p.category || "Other") === active);
 
   return (
     <section id="projects" className="py-24 px-6 scroll-mt-20 relative overflow-hidden">
-      {/* Liquid glass sphere — premium AI-inspired background */}
       <div className="pointer-events-none absolute inset-0 -z-0 flex items-center justify-center opacity-70">
         <LiquidSphere className="w-[680px] h-[680px] max-w-[90vw] max-h-[90vw]" />
       </div>
@@ -121,8 +122,8 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
       <div className="container max-w-5xl relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <div className="section-divider mb-6" />
-          <h2 className="text-3xl font-bold mb-4">Projects</h2>
-          <p className="text-muted-foreground mb-8">Hand-picked work across analytics, dashboards and ML.</p>
+          <h2 className="text-3xl font-bold mb-4">{t.projectsTitle}</h2>
+          <p className="text-muted-foreground mb-8">{t.projectsSubtitle}</p>
         </motion.div>
 
         {categories.length > 2 && (
@@ -193,7 +194,7 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
                   >
-                    View Project <ExternalLink size={16} />
+                    {t.viewProject} <ExternalLink size={16} />
                   </a>
                 )}
               </div>
