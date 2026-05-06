@@ -35,6 +35,7 @@ const resolveImage = (url: string) => seedMap[url] ?? url;
 
 export const CertificatesMarquee = () => {
   const { items } = useCertificates();
+  const { isRtl } = useLanguage();
   const [selected, setSelected] = useState<Certificate | null>(null);
   if (items.length === 0) return null;
 
