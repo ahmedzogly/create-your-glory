@@ -73,12 +73,12 @@ export const CertificatesMarquee = () => {
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-semibold text-sm line-clamp-1">{cert.title}</h3>
+                    <h3 className="font-semibold text-sm line-clamp-1">{ar(isRtl, cert.title_ar, cert.title)}</h3>
                     {cert.link && <ExternalLink size={14} className="text-primary shrink-0 mt-0.5" />}
                   </div>
-                  <p className="text-muted-foreground text-xs mb-1">{cert.issuer}</p>
-                  {cert.description && (
-                    <p className="text-muted-foreground/80 text-xs line-clamp-2">{cert.description}</p>
+                  <p className="text-muted-foreground text-xs mb-1">{ar(isRtl, cert.issuer_ar, cert.issuer)}</p>
+                  {(cert.description || cert.description_ar) && (
+                    <p className="text-muted-foreground/80 text-xs line-clamp-2">{ar(isRtl, cert.description_ar, cert.description ?? "")}</p>
                   )}
                 </div>
               </div>
