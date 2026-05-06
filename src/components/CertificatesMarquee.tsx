@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCertificates, type Certificate } from "@/hooks/use-site-data";
+import { useLanguage } from "@/hooks/use-language";
+
+const ar = (isAr: boolean, arVal: string | undefined | null, enVal: string) =>
+  isAr && arVal ? arVal : enVal;
 import certFoundations from "@/assets/certificates/cert-foundations.webp";
 import certAskQuestions from "@/assets/certificates/cert-ask-questions.webp";
 import certPrepareData from "@/assets/certificates/cert-prepare-data.webp";
