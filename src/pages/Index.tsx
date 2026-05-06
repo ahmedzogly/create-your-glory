@@ -303,6 +303,15 @@ const Index = () => {
       <HeroSection content={content} />
       <SummarySection summary={content.summary ?? ""} />
       <Suspense fallback={null}>
+        <PromoSection
+          title={content.promo_title ?? "Want a Portfolio Like This?"}
+          subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
+          ctaText={content.promo_cta_text ?? "Contact Me"}
+          ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
+          projects={projects}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
         <StatsSection
           experienceCount={experiences.length}
           projectsCount={projects.length}
@@ -312,15 +321,6 @@ const Index = () => {
       <ExperienceSection items={experiences} />
       <EducationSection items={education} />
       <Suspense fallback={null}><ProjectsSection items={projects} /></Suspense>
-      <Suspense fallback={null}>
-        <PromoSection
-          title={content.promo_title ?? "Want a Portfolio Like This?"}
-          subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
-          ctaText={content.promo_cta_text ?? "Contact Me"}
-          ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
-          projects={projects}
-        />
-      </Suspense>
       <SkillsSection items={skills} />
       <Suspense fallback={null}>
         <ContactSection
