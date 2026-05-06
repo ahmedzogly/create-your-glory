@@ -14,7 +14,9 @@ const fadeUp = {
   }),
 };
 
-// Subtle 3D tilt + spotlight that follows the mouse on each project card
+const ar = (isAr: boolean, arVal: string | undefined | null, enVal: string) =>
+  isAr && arVal ? arVal : enVal;
+
 const ProjectCard = ({
   project,
   index,
@@ -25,6 +27,7 @@ const ProjectCard = ({
   onSelect: (p: Project) => void;
 }) => {
   const ref = useRef<HTMLButtonElement>(null);
+  const { isRtl } = useLanguage();
   const mx = useMotionValue(0.5);
   const my = useMotionValue(0.5);
   const sx = useSpring(mx, { stiffness: 150, damping: 18, mass: 0.4 });
@@ -72,19 +75,19 @@ const ProjectCard = ({
       <div className="aspect-video overflow-hidden relative" style={{ transform: "translateZ(20px)" }}>
         <img
           src={resolveImage(project.image_url)}
-          alt={project.title}
+          alt={ar(isRtl, project.title_ar, project.title)}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80" />
         <div className="absolute top-3 left-3">
           <span className="px-2.5 py-1 text-xs font-mono rounded-full glass-strong text-foreground">
-            {project.category || "Other"}
+            {ar(isRtl, project.category_ar, project.category || "Other")}
           </span>
         </div>
       </div>
       <div className="p-5 relative" style={{ transform: "translateZ(30px)" }}>
-        <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{project.title}</h3>
-        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{project.description}</p>
+        <h3 className="font-semibold text-lg mb-2 group-hover:text-gradient transition-colors">{ar(isRtl, project.title_ar, project.title)}</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{ar(isRtl, project.description_ar, project.description)}</p>
       </div>
     </motion.button>
   );
@@ -103,7 +106,7 @@ const resolveImage = (url: string) => {
 export const ProjectsSection = ({ items }: { items: Project[] }) => {
   const [active, setActive] = useState<string>("All");
   const [selected, setSelected] = useState<Project | null>(null);
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
 
   const categories = useMemo(() => {
     const set = new Set<string>(items.map((p) => p.category || "Other"));
@@ -179,14 +182,14 @@ export const ProjectsSection = ({ items }: { items: Project[] }) => {
                 <X size={18} />
               </button>
               <div className="aspect-video overflow-hidden">
-                <img src={resolveImage(selected.image_url)} alt={selected.title} className="w-full h-full object-cover" />
+                <img src={resolveImage(selected.image_url)} alt={ar(isRtl, selected.title_ar, selected.title)} className="w-full h-full object-cover" />
               </div>
               <div className="p-6">
                 <span className="inline-block px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary mb-3">
-                  {selected.category || "Other"}
+                  {ar(isRtl, selected.category_ar, selected.category || "Other")}
                 </span>
-                <h3 className="text-2xl font-bold mb-3">{selected.title}</h3>
-                <p className="text-muted-foreground leading-relaxed mb-5">{selected.description}</p>
+                <h3 className="text-2xl font-bold mb-3">{ar(isRtl, selected.title_ar, selected.title)}</h3>
+                <p className="text-muted-foreground leading-relaxed mb-5">{ar(isRtl, selected.description_ar, selected.description)}</p>
                 {selected.link && (
                   <a
                     href={selected.link}
