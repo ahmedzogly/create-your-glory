@@ -107,7 +107,7 @@ export const CertificatesMarquee = () => {
               </div>
               <div className="p-5 border-t border-border">
                 <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3 className="text-lg font-bold">{selected.title}</h3>
+                  <h3 className="text-lg font-bold">{ar(isRtl, selected.title_ar, selected.title)}</h3>
                   {selected.link && (
                     <a
                       href={selected.link}
@@ -119,9 +119,9 @@ export const CertificatesMarquee = () => {
                     </a>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mb-1">{selected.issuer}</p>
-                {selected.description && (
-                  <p className="text-sm text-muted-foreground/90">{selected.description}</p>
+                <p className="text-sm text-muted-foreground mb-1">{ar(isRtl, selected.issuer_ar, selected.issuer)}</p>
+                {(selected.description || selected.description_ar) && (
+                  <p className="text-sm text-muted-foreground/90">{ar(isRtl, selected.description_ar, selected.description ?? "")}</p>
                 )}
               </div>
             </div>
