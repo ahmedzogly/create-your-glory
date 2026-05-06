@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Linkedin, ArrowDown } from "lucide-react";
 import { useProfileImage } from "@/hooks/use-profile-image";
@@ -32,18 +32,26 @@ const fadeUp = {
   }),
 };
 
-const HeroSection = ({ content }: { content: Record<string, string> }) => {
-  const { imageUrl } = useProfileImage(profileImg);
+/** Pick Arabic value if available and lang is ar, else fallback to English */
+const ar = (isAr: boolean, arVal: string | undefined | null, enVal: string) =>
+  isAr && arVal ? arVal : enVal;
 
-  const fullName = content.hero_title ?? "";
+const HeroSection = ({ content, contentAr }: { content: Record<string, string>; contentAr: Record<string, string> }) => {
+  const { imageUrl } = useProfileImage(profileImg);
+  const { isRtl } = useLanguage();
+
+  const fullName = ar(isRtl, contentAr.hero_title, content.hero_title ?? "");
   const [firstName, ...rest] = fullName.split(" ");
   const lastName = rest.join(" ");
 
-  const role = content.hero_role ?? "";
+  const role = ar(isRtl, contentAr.hero_role, content.hero_role ?? "");
   const typingWords = role
     .split(/[|•/,]/)
     .map((s) => s.trim())
     .filter(Boolean);
+
+  const tagline = ar(isRtl, contentAr.hero_tagline, content.hero_tagline ?? "");
+  const location = ar(isRtl, contentAr.contact_location, content.contact_location ?? "");
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 noise">
@@ -108,7 +116,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
           className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
         >
-          {content.hero_tagline}
+          {tagline}
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
@@ -120,7 +128,7 @@ const HeroSection = ({ content }: { content: Record<string, string> }) => {
             </a>
           )}
           {content.contact_phone && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><Phone size={14} /> {content.contact_phone}</span>}
-          {content.contact_location && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><MapPin size={14} /> {content.contact_location}</span>}
+          {location && <span className="flex items-center gap-2 px-4 py-2 rounded-full glass text-muted-foreground"><MapPin size={14} /> {location}</span>}
           {content.contact_linkedin && (
             <a href={content.contact_linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:text-primary transition-colors">
               <Linkedin size={14} /> LinkedIn
@@ -164,7 +172,7 @@ const SummarySection = ({ summary }: { summary: string }) => {
 };
 
 const ExperienceSection = ({ items }: { items: any[] }) => {
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
   return (
     <section id="experience" className="py-24 px-6 scroll-mt-20 relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.06),transparent_60%)]" />
@@ -190,14 +198,14 @@ const ExperienceSection = ({ items }: { items: any[] }) => {
                       <img src={exp.image_url} alt={exp.company} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                     )}
                     <div>
-                      <h3 className="text-xl font-semibold">{exp.title}</h3>
-                      <p className="text-gradient text-sm font-medium">{exp.company}</p>
+                      <h3 className="text-xl font-semibold">{ar(isRtl, exp.title_ar, exp.title)}</h3>
+                      <p className="text-gradient text-sm font-medium">{ar(isRtl, exp.company_ar, exp.company)}</p>
                     </div>
                   </div>
                   <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{exp.period}</span>
                 </div>
                 <ul className="space-y-2 text-muted-foreground text-sm">
-                  {exp.bullets.map((item: string, i: number) => (
+                  {(isRtl && exp.bullets_ar?.length ? exp.bullets_ar : exp.bullets).map((item: string, i: number) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary))]" />
                       <span>{item}</span>
@@ -214,7 +222,7 @@ const ExperienceSection = ({ items }: { items: any[] }) => {
 };
 
 const EducationSection = ({ items }: { items: any[] }) => {
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
   return (
     <section id="education" className="py-24 px-6 scroll-mt-20">
       <div className="container max-w-3xl">
@@ -235,13 +243,15 @@ const EducationSection = ({ items }: { items: any[] }) => {
                     <img src={edu.image_url} alt={edu.school} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-border/50 shrink-0" />
                   )}
                   <div>
-                    <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                    <p className="text-gradient text-sm font-medium">{edu.school}</p>
+                    <h3 className="text-xl font-semibold">{ar(isRtl, edu.degree_ar, edu.degree)}</h3>
+                    <p className="text-gradient text-sm font-medium">{ar(isRtl, edu.school_ar, edu.school)}</p>
                   </div>
                 </div>
                 <span className="text-muted-foreground text-xs font-mono px-3 py-1 rounded-full glass shrink-0 self-start">{edu.period}</span>
               </div>
-              {edu.description && <p className="text-muted-foreground mt-3 text-sm">{edu.description}</p>}
+              {(edu.description || edu.description_ar) && (
+                <p className="text-muted-foreground mt-3 text-sm">{ar(isRtl, edu.description_ar, edu.description ?? "")}</p>
+              )}
             </motion.div>
           ))}
         </div>
@@ -251,7 +261,7 @@ const EducationSection = ({ items }: { items: any[] }) => {
 };
 
 const SkillsSection = ({ items }: { items: any[] }) => {
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
   return (
     <section id="skills" className="py-24 px-6 scroll-mt-20 relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_right,hsl(var(--accent)/0.06),transparent_60%)]" />
@@ -267,9 +277,9 @@ const SkillsSection = ({ items }: { items: any[] }) => {
               variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
               className="rounded-2xl glass p-6"
             >
-              <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{group.category}</h3>
+              <h3 className="text-xs font-mono text-gradient uppercase tracking-widest mb-4">{ar(isRtl, group.category_ar, group.category)}</h3>
               <div className="flex flex-wrap gap-2">
-                {group.items.map((skill: string) => (
+                {(isRtl && group.items_ar?.length ? group.items_ar : group.items).map((skill: string) => (
                   <span key={skill} className="px-3 py-1.5 rounded-lg glass-strong text-foreground text-sm hover:text-gradient transition-colors">
                     {skill}
                   </span>
@@ -284,7 +294,7 @@ const SkillsSection = ({ items }: { items: any[] }) => {
 };
 
 const Index = () => {
-  const { content, loading } = useSiteContent();
+  const { content, contentAr, loading } = useSiteContent();
   const { items: experiences } = useExperiences();
   const { items: education } = useEducation();
   const { items: projects } = useProjects();
@@ -295,18 +305,20 @@ const Index = () => {
     return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   }
 
+  const c = (key: string) => ar(isRtl, contentAr[key], content[key] ?? "");
+
   return (
     <div className="min-h-screen relative" dir={isRtl ? "rtl" : "ltr"}>
       <Suspense fallback={null}><WebGLBackground /></Suspense>
       <div className="relative z-10">
-      <Navbar name={content.hero_title ?? ""} />
-      <HeroSection content={content} />
-      <SummarySection summary={content.summary ?? ""} />
+      <Navbar name={c("hero_title")} />
+      <HeroSection content={content} contentAr={contentAr} />
+      <SummarySection summary={c("summary")} />
       <Suspense fallback={null}>
         <PromoSection
-          title={content.promo_title ?? "Want a Portfolio Like This?"}
-          subtitle={content.promo_subtitle ?? "I build modern animated portfolios. Get yours today."}
-          ctaText={content.promo_cta_text ?? "Contact Me"}
+          title={c("promo_title") || "Want a Portfolio Like This?"}
+          subtitle={c("promo_subtitle") || "I build modern animated portfolios. Get yours today."}
+          ctaText={c("promo_cta_text") || "Contact Me"}
           ctaLink={content.promo_cta_link ?? `mailto:${content.contact_email ?? ""}`}
           projects={projects}
         />
@@ -326,13 +338,13 @@ const Index = () => {
         <ContactSection
           email={content.contact_email}
           phone={content.contact_phone}
-          location={content.contact_location}
+          location={c("contact_location")}
           linkedin={content.contact_linkedin}
           github={content.contact_github}
         />
       </Suspense>
       <footer className="py-12 text-center text-muted-foreground text-sm border-t border-border/50">
-        <p className="font-mono text-xs tracking-wider">© 2026 {content.hero_title ?? ""} — {t.footerText}</p>
+        <p className="font-mono text-xs tracking-wider">© 2026 {c("hero_title")} — {t.footerText}</p>
       </footer>
       </div>
       <Chatbot />

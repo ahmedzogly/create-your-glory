@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCertificates, type Certificate } from "@/hooks/use-site-data";
+import { useLanguage } from "@/hooks/use-language";
+
+const ar = (isAr: boolean, arVal: string | undefined | null, enVal: string) =>
+  isAr && arVal ? arVal : enVal;
 import certFoundations from "@/assets/certificates/cert-foundations.webp";
 import certAskQuestions from "@/assets/certificates/cert-ask-questions.webp";
 import certPrepareData from "@/assets/certificates/cert-prepare-data.webp";
@@ -31,6 +35,7 @@ const resolveImage = (url: string) => seedMap[url] ?? url;
 
 export const CertificatesMarquee = () => {
   const { items } = useCertificates();
+  const { isRtl } = useLanguage();
   const [selected, setSelected] = useState<Certificate | null>(null);
   if (items.length === 0) return null;
 
@@ -68,12 +73,12 @@ export const CertificatesMarquee = () => {
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-semibold text-sm line-clamp-1">{cert.title}</h3>
+                    <h3 className="font-semibold text-sm line-clamp-1">{ar(isRtl, cert.title_ar, cert.title)}</h3>
                     {cert.link && <ExternalLink size={14} className="text-primary shrink-0 mt-0.5" />}
                   </div>
-                  <p className="text-muted-foreground text-xs mb-1">{cert.issuer}</p>
-                  {cert.description && (
-                    <p className="text-muted-foreground/80 text-xs line-clamp-2">{cert.description}</p>
+                  <p className="text-muted-foreground text-xs mb-1">{ar(isRtl, cert.issuer_ar, cert.issuer)}</p>
+                  {(cert.description || cert.description_ar) && (
+                    <p className="text-muted-foreground/80 text-xs line-clamp-2">{ar(isRtl, cert.description_ar, cert.description ?? "")}</p>
                   )}
                 </div>
               </div>
@@ -102,7 +107,7 @@ export const CertificatesMarquee = () => {
               </div>
               <div className="p-5 border-t border-border">
                 <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3 className="text-lg font-bold">{selected.title}</h3>
+                  <h3 className="text-lg font-bold">{ar(isRtl, selected.title_ar, selected.title)}</h3>
                   {selected.link && (
                     <a
                       href={selected.link}
@@ -114,9 +119,9 @@ export const CertificatesMarquee = () => {
                     </a>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mb-1">{selected.issuer}</p>
-                {selected.description && (
-                  <p className="text-sm text-muted-foreground/90">{selected.description}</p>
+                <p className="text-sm text-muted-foreground mb-1">{ar(isRtl, selected.issuer_ar, selected.issuer)}</p>
+                {(selected.description || selected.description_ar) && (
+                  <p className="text-sm text-muted-foreground/90">{ar(isRtl, selected.description_ar, selected.description ?? "")}</p>
                 )}
               </div>
             </div>

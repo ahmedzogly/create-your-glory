@@ -18,34 +18,43 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          description_ar: string | null
           display_order: number
           id: string
           image_url: string
           issuer: string
+          issuer_ar: string | null
           link: string | null
           title: string
+          title_ar: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url: string
           issuer?: string
+          issuer_ar?: string | null
           link?: string | null
           title: string
+          title_ar?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url?: string
           issuer?: string
+          issuer_ar?: string | null
           link?: string | null
           title?: string
+          title_ar?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -54,34 +63,43 @@ export type Database = {
         Row: {
           created_at: string
           degree: string
+          degree_ar: string | null
           description: string | null
+          description_ar: string | null
           display_order: number
           id: string
           image_url: string | null
           period: string
           school: string
+          school_ar: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           degree: string
+          degree_ar?: string | null
           description?: string | null
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
           period: string
           school: string
+          school_ar?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           degree?: string
+          degree_ar?: string | null
           description?: string | null
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
           period?: string
           school?: string
+          school_ar?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -89,35 +107,44 @@ export type Database = {
       experiences: {
         Row: {
           bullets: string[]
+          bullets_ar: string[] | null
           company: string
+          company_ar: string | null
           created_at: string
           display_order: number
           id: string
           image_url: string | null
           period: string
           title: string
+          title_ar: string | null
           updated_at: string
         }
         Insert: {
           bullets?: string[]
+          bullets_ar?: string[] | null
           company: string
+          company_ar?: string | null
           created_at?: string
           display_order?: number
           id?: string
           image_url?: string | null
           period: string
           title: string
+          title_ar?: string | null
           updated_at?: string
         }
         Update: {
           bullets?: string[]
+          bullets_ar?: string[] | null
           company?: string
+          company_ar?: string | null
           created_at?: string
           display_order?: number
           id?: string
           image_url?: string | null
           period?: string
           title?: string
+          title_ar?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -182,35 +209,44 @@ export type Database = {
       projects: {
         Row: {
           category: string
+          category_ar: string | null
           created_at: string
           description: string
+          description_ar: string | null
           display_order: number
           id: string
           image_url: string
           link: string | null
           title: string
+          title_ar: string | null
           updated_at: string
         }
         Insert: {
           category?: string
+          category_ar?: string | null
           created_at?: string
           description: string
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url: string
           link?: string | null
           title: string
+          title_ar?: string | null
           updated_at?: string
         }
         Update: {
           category?: string
+          category_ar?: string | null
           created_at?: string
           description?: string
+          description_ar?: string | null
           display_order?: number
           id?: string
           image_url?: string
           link?: string | null
           title?: string
+          title_ar?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -221,44 +257,53 @@ export type Database = {
           key: string
           updated_at: string
           value: string
+          value_ar: string | null
         }
         Insert: {
           id?: string
           key: string
           updated_at?: string
           value: string
+          value_ar?: string | null
         }
         Update: {
           id?: string
           key?: string
           updated_at?: string
           value?: string
+          value_ar?: string | null
         }
         Relationships: []
       }
       skills: {
         Row: {
           category: string
+          category_ar: string | null
           created_at: string
           display_order: number
           id: string
           items: string[]
+          items_ar: string[] | null
           updated_at: string
         }
         Insert: {
           category: string
+          category_ar?: string | null
           created_at?: string
           display_order?: number
           id?: string
           items?: string[]
+          items_ar?: string[] | null
           updated_at?: string
         }
         Update: {
           category?: string
+          category_ar?: string | null
           created_at?: string
           display_order?: number
           id?: string
           items?: string[]
+          items_ar?: string[] | null
           updated_at?: string
         }
         Relationships: []

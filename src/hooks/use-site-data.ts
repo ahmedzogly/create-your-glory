@@ -2,29 +2,35 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type SiteContent = Record<string, string>;
-export type Experience = { id: string; title: string; company: string; period: string; bullets: string[]; display_order: number; image_url?: string | null };
-export type Education = { id: string; degree: string; school: string; period: string; description: string | null; display_order: number; image_url?: string | null };
-export type Project = { id: string; title: string; description: string; image_url: string; display_order: number; category: string; link: string | null };
-export type Skill = { id: string; category: string; items: string[]; display_order: number };
-export type Certificate = { id: string; title: string; issuer: string; description: string | null; image_url: string; link: string | null; display_order: number };
+export type Experience = { id: string; title: string; company: string; period: string; bullets: string[]; display_order: number; image_url?: string | null; title_ar?: string | null; company_ar?: string | null; bullets_ar?: string[] | null };
+export type Education = { id: string; degree: string; school: string; period: string; description: string | null; display_order: number; image_url?: string | null; degree_ar?: string | null; school_ar?: string | null; description_ar?: string | null };
+export type Project = { id: string; title: string; description: string; image_url: string; display_order: number; category: string; link: string | null; title_ar?: string | null; description_ar?: string | null; category_ar?: string | null };
+export type Skill = { id: string; category: string; items: string[]; display_order: number; category_ar?: string | null; items_ar?: string[] | null };
+export type Certificate = { id: string; title: string; issuer: string; description: string | null; image_url: string; link: string | null; display_order: number; title_ar?: string | null; issuer_ar?: string | null; description_ar?: string | null };
 export type OrbitSkill = { id: string; label: string; icon: string; color: string; display_order: number };
 
 export const useSiteContent = () => {
   const [content, setContent] = useState<SiteContent>({});
+  const [contentAr, setContentAr] = useState<SiteContent>({});
   const [loading, setLoading] = useState(true);
 
   const fetchContent = useCallback(async () => {
-    const { data } = await supabase.from("site_content").select("key, value");
+    const { data } = await supabase.from("site_content").select("key, value, value_ar");
     if (data) {
       const map: SiteContent = {};
-      data.forEach((row) => { map[row.key] = row.value; });
+      const mapAr: SiteContent = {};
+      data.forEach((row: any) => {
+        map[row.key] = row.value;
+        if (row.value_ar) mapAr[row.key] = row.value_ar;
+      });
       setContent(map);
+      setContentAr(mapAr);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => { fetchContent(); }, [fetchContent]);
-  return { content, loading, refetch: fetchContent };
+  return { content, contentAr, loading, refetch: fetchContent };
 };
 
 export const useExperiences = () => {
